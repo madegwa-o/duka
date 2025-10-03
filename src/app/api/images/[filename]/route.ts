@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { r2Client, BUCKET_NAME } from '@/lib/r2';
+import { Readable } from 'stream';
 
 export async function GET(
     request: NextRequest,
@@ -27,7 +28,9 @@ export async function GET(
 
         // Convert stream to buffer
         const chunks: Uint8Array[] = [];
-        for await (const chunk of response.Body as any) {
+        const body = response.Body as Readable;
+
+        for await (const chunk of body) {
             chunks.push(chunk);
         }
         const buffer = Buffer.concat(chunks);
