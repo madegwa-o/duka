@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     manifest: "/manifest.json",
     keywords: ["property management", "tenant management", "rent collection", "Kenya"],
     authors: [
-        { name: "Malipo Agents" }
+        { name: "Duka Karu" }
     ],
     icons: [
         { rel: "apple-touch-icon", url: "/logo.png" },
