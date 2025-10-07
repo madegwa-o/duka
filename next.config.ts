@@ -43,6 +43,24 @@ const nextConfig: NextConfig = {
                 hostname: 'a13bab3063d300082d0a15d610f46cb4.r2.cloudflarestorage.com', // Your R2 endpoint
                 pathname: '/**',
             },
+            {
+                protocol: 'https',
+                hostname: 'lh3.googleusercontent.com',
+                port: '',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'avatars.githubusercontent.com',
+                port: '',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'images.unsplash.com',
+                port: '',
+                pathname: '/**',
+            },
         ],
     },
 };
