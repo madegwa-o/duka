@@ -2,6 +2,8 @@
 import Google from "next-auth/providers/google";
 import { addOrUpdateUser, getUserByEmail } from "@/lib/users";
 import NextAuth, { DefaultSession } from "next-auth";
+import { Role } from "@/models/User"
+
 
 // Extend the NextAuth types to include roles
 declare module "next-auth" {
@@ -14,7 +16,7 @@ declare module "next-auth" {
 
     interface User {
         id: string;
-        roles?: string[];
+        roles?: Role[];
     }
 }
 
@@ -34,14 +36,15 @@ const handler = NextAuth({
     ],
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
-        async signIn({ user, account, profile }) {
+        async signIn({ user, account }) {
             try {
                 if (account?.provider === "google" && user.email && user.name) {
                     await addOrUpdateUser({
                         name: user.name,
                         email: user.email,
                         image: user.image ?? undefined,
-                        roles: ["tenant"], // Default role for new users
+                        roles: [Role.USER],
+                        lastLogin: new Date(),
                     });
                 }
                 return true;
@@ -50,7 +53,7 @@ const handler = NextAuth({
                 return false;
             }
         },
-        async jwt({ token, user, account, profile, trigger }) {
+        async jwt({ token, user, trigger }) {
             // This runs on initial signin and when token is refreshed
             // The 'update' trigger allows us to refresh the token programmatically
             if (user?.email || trigger === "update") {
@@ -87,8 +90,8 @@ const handler = NextAuth({
         },
     },
     pages: {
-        signIn: '/',
-        error: '/',
+        signIn: '/signin',
+        error: '/autherror',
     },
     debug: process.env.NODE_ENV === "development",
 });

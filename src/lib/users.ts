@@ -1,56 +1,62 @@
-import { connectToDatabase } from "./db"
-import { User, Role, type IUser } from "@/models/User"
+// ============================================
+// lib/users.ts
+// ============================================
+import { connectToDatabase } from "@/lib/db";
+import { User, Role, IUser } from "@/models/User";
 
-interface CreateUserData {
-    name: string
-    email: string
-    image?: string
-    roles?: Role[]
-    password?: string
+export type AppUser = {
+    id: string;
+    name: string;
+    email: string;
+    image?: string;
+    roles: Role[];
+};
+
+function mapUser(user: IUser): AppUser {
+    return {
+        id: user._id.toString(),
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        roles: user.roles,
+    };
 }
 
-export async function addOrUpdateUser(userData: CreateUserData): Promise<IUser> {
-    await connectToDatabase()
+// ✅ Find user by email
+export async function getUserByEmail(email: string): Promise<AppUser | null> {
+    await connectToDatabase();
+    const user = await User.findOne({ email: email.toLowerCase() });
+    return user ? mapUser(user) : null;
+}
 
-    const existingUser = await User.findOne({ email: userData.email })
+
+// ✅ Add or update user — only updating lastLogin if user exists
+export async function addOrUpdateUser(data: {
+    name: string;
+    email: string;
+    image?: string;
+    roles?: Role[];
+    lastLogin: Date;
+}): Promise<AppUser> {
+    await connectToDatabase();
+
+    const existingUser = await User.findOne({ email: data.email.toLowerCase() });
 
     if (existingUser) {
-        // Update existing user
-        existingUser.name = userData.name
-        if (userData.image) existingUser.image = userData.image
-        existingUser.lastLogin = new Date()
-        await existingUser.save()
-        return existingUser
+        // ✅ Just update lastLogin
+        existingUser.lastLogin = data.lastLogin;
+        await existingUser.save();
+        return mapUser(existingUser);
     }
 
-    // Create new user
+    // ✅ If new user, create one
     const newUser = await User.create({
-        name: userData.name,
-        email: userData.email,
-        image: userData.image,
-        roles: userData.roles || [Role.USER],
-        password: userData.password,
-    })
+        name: data.name,
+        email: data.email.toLowerCase(),
+        image: data.image,
+        roles: data.roles?.length ? data.roles : [Role.USER],
+        lastLogin: data.lastLogin,
+    });
 
-    return newUser
-}
-
-export async function getUserByEmail(email: string): Promise<IUser | null> {
-    await connectToDatabase()
-    return User.findOne({ email }).select("+password")
-}
-
-export async function getUserById(id: string): Promise<IUser | null> {
-    await connectToDatabase()
-    return User.findById(id)
-}
-
-export async function updateUserPassword(email: string, password: string): Promise<IUser | null> {
-    await connectToDatabase()
-    const user = await User.findOne({ email })
-    if (!user) return null
-
-    user.password = password
-    await user.save()
-    return user
+    return mapUser(newUser);
 }

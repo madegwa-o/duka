@@ -40,9 +40,9 @@ export function Header() {
     }, [isMenuOpen])
 
     const navLinks = [
-        { href: "/", label: "Home" },
-        { href: "/consult", label: "Consult" },
-        { href: "/scan", label: "Scan Image" },
+        { label: "Buy", href: "/" },
+        { label: "My Cart", href: "/my-cart" },
+        { label: "My Shop", href: "/my-shop" },
         { href: "/history", label: "My History" },
         { href: "/pricing", label: "Pricing" },
         { href: "/docs", label: "Docs" },
@@ -70,10 +70,7 @@ export function Header() {
         >
             <div className="container mx-auto flex h-16 items-center justify-between px-4">
                 <Link href="/" className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                        <span className="font-bold text-lg text-primary-foreground">K</span>
-                    </div>
-                    <span className="font-bold text-xl">Kia</span>
+                    <span className="font-bold text-xl">Duka</span>
                 </Link>
 
                 {/* Desktop Navigation */}

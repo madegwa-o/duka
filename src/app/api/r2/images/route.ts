@@ -13,7 +13,7 @@ export async function GET() {
 
         const images = response.Contents?.map((item) => ({
             filename: item.Key,
-            url: `/api/images/${item.Key}`,
+            url: `/api/r2/images/${item.Key}`,
             lastModified: item.LastModified,
             size: item.Size,
         })) || [];

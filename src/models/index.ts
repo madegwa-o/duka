@@ -1,7 +1,10 @@
-import { Institution } from "./Institution";
-import { User } from "./User";
-import { Payment } from "./Payment";
-import { Subscription } from "./Subscription";
 
-// Export them so they can still be imported directly if needed
-export { Institution, User, Payment, Subscription };
+// ============================================
+// models/index.ts
+// ============================================
+import { Category } from "@/models/Category";
+import { Product } from "@/models/Product";
+import { Shop } from "@/models/Shop";
+import { User } from "@/models/User";
+
+export { Category, Product, User, Shop };

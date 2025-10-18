@@ -1,23 +1,18 @@
 'use client';
 
+
+import {ImageData } from "@/lib/uploadImage"
+
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import ImageUploader from '@/components/ImageUploader';
 
-interface ImageData {
-	filename: string;
-	url: string;
-	lastModified: string;
-	size: number;
-}
-
-export default function Home() {
-	const [file, setFile] = useState<File | null>(null);
-	const [uploading, setUploading] = useState(false);
+export default function Gallary() {
 	const [uploadedImages, setUploadedImages] = useState<ImageData[]>([]);
-	const [previewUrl, setPreviewUrl] = useState<string>('');
 	const [loading, setLoading] = useState(true);
+	const [latestUrl, setLatestUrl] = useState<string | null>(null);
 
-	// Fetch images from R2 bucket on component mount
+
 	useEffect(() => {
 		fetchImages();
 	}, []);
@@ -25,58 +20,13 @@ export default function Home() {
 	const fetchImages = async () => {
 		try {
 			setLoading(true);
-			const response = await fetch('/api/r2/images');
-			const data = await response.json();
-
-			if (data.images) {
-				setUploadedImages(data.images);
-			}
-		} catch (error) {
-			console.error('Error fetching images:', error);
+			const res = await fetch('/api/r2/images');
+			const data = await res.json();
+			setUploadedImages(data.images || []);
+		} catch (err) {
+			console.error('Error fetching images:', err);
 		} finally {
 			setLoading(false);
-		}
-	};
-
-	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const selectedFile = e.target.files?.[0];
-		if (selectedFile) {
-			setFile(selectedFile);
-			// Create preview URL
-			const url = URL.createObjectURL(selectedFile);
-			setPreviewUrl(url);
-		}
-	};
-
-	const handleUpload = async () => {
-		if (!file) return;
-
-		setUploading(true);
-		const formData = new FormData();
-		formData.append('file', file);
-
-		try {
-			const response = await fetch('/api/r2/upload', {
-				method: 'POST',
-				body: formData,
-			});
-
-			const data = await response.json();
-
-			if (data.success) {
-				// Refresh the images list after successful upload
-				await fetchImages();
-				setFile(null);
-				setPreviewUrl('');
-				alert('Image uploaded successfully!');
-			} else {
-				alert('Upload failed: ' + data.error);
-			}
-		} catch (error) {
-			console.error('Upload error:', error);
-			alert('Upload failed');
-		} finally {
-			setUploading(false);
 		}
 	};
 
@@ -86,15 +36,14 @@ export default function Home() {
 		return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 	};
 
-	const formatDate = (dateString: string) => {
-		return new Date(dateString).toLocaleDateString('en-US', {
+	const formatDate = (date: string) =>
+		new Date(date).toLocaleString('en-US', {
 			year: 'numeric',
 			month: 'short',
 			day: 'numeric',
 			hour: '2-digit',
 			minute: '2-digit',
 		});
-	};
 
 	return (
 		<div className="font-sans min-h-screen p-8 pb-20 bg-gray-50 dark:bg-gray-900">
@@ -104,39 +53,24 @@ export default function Home() {
 				</h1>
 
 				{/* Upload Section */}
-				<div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
-					<h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
-						Upload Image
-					</h2>
-
-					<div className="space-y-4">
-						<input
-							type="file"
-							accept="image/*"
-							onChange={handleFileChange}
-							className="block w-full text-sm text-gray-900 dark:text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900 dark:file:text-blue-300 cursor-pointer"
-						/>
-
-						{previewUrl && (
-							<div className="relative w-full h-64 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
-								<Image
-									src={previewUrl}
-									alt="Preview"
-									fill
-									className="object-contain"
-								/>
-							</div>
-						)}
-
-						<button
-							onClick={handleUpload}
-							disabled={!file || uploading}
-							className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded-lg transition-colors"
-						>
-							{uploading ? 'Uploading...' : 'Upload Image'}
-						</button>
-					</div>
+				<div className="mb-8">
+					<ImageUploader
+						onUploadSuccess={fetchImages}
+						onUploadComplete={(url) => {
+							setLatestUrl(url);
+							console.log('Uploaded image URL:', url);
+						}}
+					/>
 				</div>
+
+				{/* Show latest uploaded image URL */}
+				{latestUrl && (
+					<p className="text-center text-green-600 mb-4">
+						Last uploaded image: <a href={`${window.location.origin}/${latestUrl}` }>{latestUrl}</a>
+						<img src={`${window.location.origin}/${latestUrl}` } alt="duka"/>
+					</p>
+				)}
+
 
 				{/* Images Gallery Section */}
 				<div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
