@@ -1,66 +1,194 @@
-// models/User.ts - Updated with proper TypeScript interface
-import {Schema, model, models, type Model, Document, Types} from "mongoose";
+// ============================================
+// models/User.ts
+// ============================================
+import { Schema, model, models, Types, Document } from "mongoose";
+import bcrypt from "bcryptjs";
+import { IInstitution } from "./Institution";
 
-export type UserRole = "landlord" | "tenant";
+export enum Role {
+	ADMIN = "ADMIN",
+	PRACTITIONER = "PRACTITIONER",
+	USER = "USER",
+}
+
+export enum AccountType {
+	PREMIUM = "PREMIUM",
+	FREEMIUM = "FREEMIUM",
+}
+
+export interface MedicalImage {
+	imageLabel: string,
+	imageUrl: string,
+}
+
 export interface IUser extends Document {
 	_id: Types.ObjectId;
 	name: string;
 	email: string;
+	password?: string;
 	image?: string;
-	roles: UserRole[];
+	medicalImageUrls: MedicalImage[];
 	phone?: string;
-	joinedApartments?: Schema.Types.ObjectId[];
-	ownedApartments?: Schema.Types.ObjectId[];
+	address?: string;
+	callCredits: number;
+	institution: (Types.ObjectId | IInstitution)[];
+	roles: Role[];
+	accountType: AccountType;
+	isActive: boolean;
+	lastLogin?: Date;
+	createdAt: Date;
+	updatedAt: Date;
 
-	// Replace currentDoor with rentedHouses array
-	rentedHouses?: {
-		apartment: Schema.Types.ObjectId;
-		houseId: Schema.Types.ObjectId;
-
-	}[];
-
-	// Add method signatures to interface
-	hasRole(role: UserRole): boolean;
-	addRole(role: UserRole): void;
-	removeRole(role: UserRole): void;
+	comparePassword(candidate: string): Promise<boolean>;
+	hasRole(role: Role): boolean;
+	addRole(role: Role): void;
+	removeRole(role: Role): void;
 }
 
 const UserSchema = new Schema<IUser>(
 	{
-		name: { type: String, required: true },
-		email: { type: String, required: true, unique: true },
-		image: { type: String },
+		name: {
+			type: String,
+			required: [true, "Name is required"],
+			trim: true,
+			minlength: [2, "Name must be at least 2 characters"],
+			maxlength: [50, "Name cannot exceed 50 characters"],
+		},
+		email: {
+			type: String,
+			required: [true, "Email is required"],
+			unique: true,
+			lowercase: true,
+			trim: true,
+			match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Invalid email address"],
+			index: true,
+		},
+		password: {
+			type: String,
+			minlength: [6, "Password must be at least 6 characters"],
+			select: false,
+		},
+		medicalImageUrls: [{
+			imageLabel: {
+				type: String,
+				required: [true, "Image label is required"],
+				trim: true,
+			},
+			imageUrl: {
+				type: String,
+				required: [true, "Image URL is required"],
+				trim: true,
+			},
+			_id: false,  // Prevents Mongoose from auto-generating _id for each image
+		}],
+		callCredits: {
+			type: Number,
+			default: 0,
+			min: [0, "Call credits cannot be negative"],
+		},
+		image: {
+			type: String,
+			default: null,
+		},
+		phone: {
+			type: String,
+			trim: true,
+			default: null,
+		},
+		address: {
+			type: String,
+			trim: true,
+			default: null,
+		},
 		roles: {
 			type: [String],
-			enum: ["landlord", "tenant"],
-			default: ["tenant"] // Default to tenant role
+			enum: Object.values(Role),
+			default: [Role.USER],
+			index: true,
+			validate: {
+				validator: function(v: string[]) {
+					return v.length > 0;
+				},
+				message: "User must have at least one role",
+			},
 		},
-		phone: { type: String },
-		joinedApartments: [{ type: Schema.Types.ObjectId, ref: "Apartment" }],
-		ownedApartments: [{ type: Schema.Types.ObjectId, ref: "Apartment" }],
-		rentedHouses: [
-			{
-				apartment: { type: Schema.Types.ObjectId, ref: "Apartment" },
-				houseId: { type: Schema.Types.ObjectId, ref: "House" },
-			}
-		],
+		institution: [{
+			type: Schema.Types.ObjectId,
+			ref: "Institution",
+		}],
+		accountType: {
+			type: String,
+			enum: Object.values(AccountType),
+			default: AccountType.FREEMIUM,
+			index: true,
+		},
+		isActive: {
+			type: Boolean,
+			default: true,
+			index: true,
+		},
+		lastLogin: {
+			type: Date,
+			default: null,
+		},
 	},
-	{ timestamps: true }
+	{
+		timestamps: true,
+		versionKey: false,
+		toJSON: {
+			virtuals: true,
+			transform: (_, ret) => {
+				delete ret.password;
+				return ret;
+			},
+		},
+		toObject: {
+			virtuals: true,
+			transform: (_, ret) => {
+				delete ret.password;
+				return ret;
+			},
+		},
+	}
 );
 
-// Helper methods
-UserSchema.methods.hasRole = function(role: UserRole): boolean {
+// 📇 Compound indexes for common queries
+UserSchema.index({ email: 1, isActive: 1 });
+UserSchema.index({ roles: 1, accountType: 1 });
+
+// 🔒 Hash password before saving
+UserSchema.pre("save", async function (next) {
+	if (!this.isModified("password") || !this.password) return next();
+
+	try {
+		const salt = await bcrypt.genSalt(10);
+		this.password = await bcrypt.hash(this.password, salt);
+		next();
+	} catch (error) {
+		next(error as Error);
+	}
+});
+
+// 🧠 Password comparison
+UserSchema.methods.comparePassword = async function (candidate: string): Promise<boolean> {
+	if (!this.password) return false;
+	return bcrypt.compare(candidate, this.password);
+};
+
+// 🧩 Role management methods
+UserSchema.methods.hasRole = function (role: Role): boolean {
 	return this.roles.includes(role);
 };
 
-UserSchema.methods.addRole = function(role: UserRole): void {
-	if (!this.hasRole(role)) {
+UserSchema.methods.addRole = function (role: Role): void {
+	if (!this.roles.includes(role)) {
 		this.roles.push(role);
 	}
 };
 
-UserSchema.methods.removeRole = function(role: UserRole): void {
-	this.roles = this.roles.filter((r: UserRole) => r !== role);
+UserSchema.methods.removeRole = function (role: Role): void {
+	this.roles = this.roles.filter((r: Role) => r !== role);
 };
 
-export const User: Model<IUser> = models.User || model<IUser>("User", UserSchema);
+// 🚀 Export
+export const User = models.User || model<IUser>("User", UserSchema);

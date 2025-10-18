@@ -1,504 +1,251 @@
-'use client'
+"use client"
 
-import Image from "next/image";
-import { signIn, signOut, useSession } from "next-auth/react";
-import {useEffect, useRef, useState} from "react";
-import Link from "next/link";
-import {useNotifications} from "@/components/notifications/notification-context";
-import {useNetworkStatus} from "@/hooks/useNetworkStatus";
+import Link from "next/link"
+import { useEffect, useRef, useState } from "react"
+import { Menu, X, Moon, Sun, User, LogIn, LogOut } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { useTheme } from "@/components/theme-provider"
+import { useSession, signOut } from "next-auth/react"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-export default function Header() {
-    const { data: session } = useSession();
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isDarkMode, setIsDarkMode] = useState(false);
-
-    const { addNotification } = useNotifications();
-    const isOnline = useNetworkStatus();
-    const menuRef = useRef<HTMLDivElement>(null);
+export function Header() {
+    const { data: session, status } = useSession()
+    const menuRef = useRef<HTMLDivElement>(null)
+    const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const { theme, setTheme } = useTheme()
 
     // Close menu when clicking outside
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-                setIsMenuOpen(false);
+                setIsMenuOpen(false)
             }
         }
 
-        // Only add listener when menu is open
         if (isMenuOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener('mousedown', handleClickOutside)
         }
 
         return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [isMenuOpen]);
-
-    // Enhanced sign-in handler with error handling
-    const handleSignIn = async () => {
-        if (session) {
-            addNotification({
-                type: "info",
-                title: "Already signed in",
-                message: `You’re already signed in as ${session.user?.email}`,
-                duration: 4000,
-            });
-            return;
+            document.removeEventListener('mousedown', handleClickOutside)
         }
+    }, [isMenuOpen])
 
-        if (!isOnline) {
-            addNotification({
-                type: 'warning',
-                title: 'No Internet Connection',
-                message: 'Please check your internet connection and try again.',
-                duration: 5000,
-            });
-            return;
+    const navLinks = [
+        { href: "/", label: "Home" },
+        { href: "/consult", label: "Consult" },
+        { href: "/scan", label: "Scan Image" },
+        { href: "/history", label: "My History" },
+        { href: "/pricing", label: "Pricing" },
+        { href: "/docs", label: "Docs" },
+        { href: "/share", label: "Share" },
+        { href: "/account", label: "My Account" },
+    ]
+
+    const handleSignOut = async () => {
+        await signOut({ callbackUrl: "/" })
+    }
+
+    const getUserInitials = (name: string | null | undefined) => {
+        if (!name) return "U"
+        const names = name.split(" ")
+        if (names.length >= 2) {
+            return `${names[0][0]}${names[1][0]}`.toUpperCase()
         }
-
-        try {
-            // Show loading notification
-            addNotification({
-                type: 'info',
-                title: 'Signing In',
-                message: 'Please wait while we connect to Google...',
-                duration: 3000,
-            });
-
-            await signIn("google");
-        } catch (error) {
-            addNotification({
-                type: 'error',
-                title: 'Sign-in Failed',
-                message: 'An unexpected error occurred. Please try again.',
-                duration: 5000,
-                actions: [
-                    {
-                        label: 'Retry',
-                        onClick: () => handleSignIn()
-                    }
-                ]
-            });
-            console.error(error);
-        }
-    };
-
-
-    // Initialize theme from localStorage or system preference
-    useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
-            setIsDarkMode(true);
-            document.documentElement.setAttribute('data-theme', 'dark');
-            document.documentElement.style.colorScheme = 'dark';
-        } else {
-            setIsDarkMode(false);
-            document.documentElement.setAttribute('data-theme', 'light');
-            document.documentElement.style.colorScheme = 'light';
-        }
-    }, []);
-
-    const toggleTheme = () => {
-        const newTheme = !isDarkMode;
-        setIsDarkMode(newTheme);
-
-        if (newTheme) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            document.documentElement.style.colorScheme = 'dark';
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.documentElement.setAttribute('data-theme', 'light');
-            document.documentElement.style.colorScheme = 'light';
-            localStorage.setItem('theme', 'light');
-        }
-    };
-
-    const navigationItems = [
-        { label: "Buy", href: "/" },
-        { label: "My Cart", href: "/my-cart" },
-        { label: "My Shop", href: "/my-shop" }
-    ];
-
+        return name.substring(0, 2).toUpperCase()
+    }
 
     return (
-        <header  ref={menuRef}
-                 className="sticky top-0 z-50 w-full border-b backdrop-blur-lg"
-                 style={{
-                     borderColor: 'var(--header-border)',
-                     backgroundColor: 'var(--header-bg)'
-                 }}>
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex h-16 items-center justify-between">
-                    {/* Logo */}
-                    <div className="flex items-center">
-                        <Link href="/" className="font-sans text-2xl font-medium tracking-tight text-foreground">
-                            Duka
+        <header
+            ref={menuRef}
+            className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+        >
+            <div className="container mx-auto flex h-16 items-center justify-between px-4">
+                <Link href="/" className="flex items-center gap-2">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+                        <span className="font-bold text-lg text-primary-foreground">K</span>
+                    </div>
+                    <span className="font-bold text-xl">Kia</span>
+                </Link>
+
+                {/* Desktop Navigation */}
+                <nav className="hidden md:flex items-center gap-6">
+                    {navLinks.map((link) => (
+                        <Link
+                            key={link.href}
+                            href={link.href}
+                            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                            {link.label}
                         </Link>
-                    </div>
+                    ))}
+                </nav>
 
-                    {/* Desktop Navigation */}
-                    <nav className="hidden md:flex items-center space-x-8">
-                        {navigationItems.map((item) => (
-                            <a
-                                key={item.label}
-                                href={item.href}
-                                className="font-medium transition-colors duration-200 hover:opacity-80"
-                                style={{ color: 'var(--text-secondary)' }}
-                            >
-                                {item.label}
-                            </a>
-                        ))}
-                    </nav>
-
-                    {/* Desktop Actions & User Section */}
-                    <div className="hidden md:flex items-center gap-2">
-                        {/* Actions Section */}
-                        <div className="flex items-center gap-1 mr-2">
-                            {/* Theme Toggle */}
-                            <button
-                                onClick={toggleTheme}
-                                className="p-2 rounded-lg transition-all duration-200 hover:opacity-80"
-                                style={{ color: 'var(--text-secondary)' }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'var(--button-hover)';
-                                    e.currentTarget.style.color = 'var(--text-primary)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'transparent';
-                                    e.currentTarget.style.color = 'var(--text-secondary)';
-                                }}
-                                aria-label="Toggle theme"
-                            >
-                                {isDarkMode ? (
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                                    </svg>
-                                ) : (
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                                    </svg>
-                                )}
-                            </button>
-
-                            {/* Notifications */}
-                            <button
-                                className="p-2 rounded-lg transition-all duration-200 hover:opacity-80"
-                                style={{ color: 'var(--text-secondary)' }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'var(--button-hover)';
-                                    e.currentTarget.style.color = 'var(--text-primary)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'transparent';
-                                    e.currentTarget.style.color = 'var(--text-secondary)';
-                                }}
-                                aria-label="Notifications"
-                            >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                                </svg>
-                            </button>
-                        </div>
-
-                        {/* User Section */}
-                        {session ? (
-                            <div className="flex items-center gap-3">
-                                <div className="flex items-center gap-2">
-                                    {session?.user?.image ? (
-                                        <Image
-                                            src={session.user.image}
-                                            alt="avatar"
-                                            width={32}
-                                            height={32}
-                                            className="w-8 h-8 rounded-full ring-2"
-                                            style={{
-                                                '--tw-ring-color': 'var(--ring-color)'
-                                            } as React.CSSProperties}
-                                        />
-                                    ) : (
-                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-medium">
-                                            {session?.user?.name?.charAt(0) ?? "G"}
-                                        </div>
-                                    )}
-                                    <div className="text-sm">
-                                        <div className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                                            {session?.user?.name ?? "Guest"}
-                                        </div>
-                                        <div className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
-                                            {session?.user?.email ?? "Not signed in"}
-                                        </div>
-                                    </div>
-                                </div>
-                                <button
-                                    className="px-4 py-2 text-sm font-medium rounded-lg border transition-all duration-200"
-                                    style={{
-                                        color: 'var(--text-secondary)',
-                                        borderColor: 'var(--button-border)',
-                                        backgroundColor: 'transparent'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.backgroundColor = 'var(--button-hover)';
-                                        e.currentTarget.style.color = 'var(--text-primary)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor = 'transparent';
-                                        e.currentTarget.style.color = 'var(--text-secondary)';
-                                    }}
-                                    onClick={() => signOut()}
-                                >
-                                    Sign out
-                                </button>
-                            </div>
-                        ) : (
-                            <button
-                                className="px-4 py-2 text-sm font-medium color-text-primary rounded-lg border transition-all duration-200"
-                                style={{
-                                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                                    borderColor: 'rgba(255, 255, 255, 0.1)',
-
-                                }}
-
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                                }}
-                                onClick={() => handleSignIn()}
-                            >
-                                Sign in
-                            </button>
-                        )}
-                    </div>
-
-                    {/* Mobile Hamburger Button */}
-                    <button
-                        className="md:hidden relative p-1 rounded-xl transition-all duration-200 group"
-                        style={{ backgroundColor: 'var(--surface-hover)' }}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = 'var(--button-hover)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'var(--surface-hover)';
-                        }}
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        aria-label="Toggle menu"
+                <div className="flex items-center gap-2">
+                    {/* Theme Toggle */}
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                        className="h-9 w-9"
                     >
-                        <div className="flex items-center gap-2">
-                            {/* User Avatar/Initial - Always visible when menu is closed */}
-                            <div className={`transition-all duration-300 ${isMenuOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}>
-                                {session ? (
-                                    <>
-                                        {session?.user?.image ? (
-                                            <Image
-                                                src={session.user.image}
-                                                alt="avatar"
-                                                width={32}
-                                                height={32}
-                                                className="w-8 h-8 rounded-full ring-2 transition-all duration-200"
-                                                style={{
-                                                    '--tw-ring-color': 'var(--ring-color)'
-                                                } as React.CSSProperties}
+                        <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                        <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                        <span className="sr-only">Toggle theme</span>
+                    </Button>
+
+                    {/* User Avatar & Auth (Desktop) */}
+                    <div className="hidden md:flex items-center gap-2">
+                        {status === "loading" ? (
+                            <div className="h-9 w-9 rounded-full bg-muted animate-pulse" />
+                        ) : session?.user ? (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                                        <Avatar className="h-9 w-9">
+                                            <AvatarImage
+                                                src={session.user.image || undefined}
+                                                alt={session.user.name || "User"}
                                             />
-                                        ) : (
-                                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-medium ring-2 transition-all duration-200 group-hover:scale-110"
-                                                 style={{
-                                                     '--tw-ring-color': 'var(--ring-color)'
-                                                 } as React.CSSProperties}>
-                                                {session?.user?.name?.charAt(0) ?? "G"}
-                                            </div>
-                                        )}
-                                    </>
-                                ) : (
-                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center text-white text-sm font-medium ring-2 transition-all duration-200 group-hover:scale-110"
-                                         style={{
-                                             '--tw-ring-color': 'var(--ring-color)'
-                                         } as React.CSSProperties}>
-                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                                        </svg>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Three dashes indicator - visible when menu is closed */}
-                            <div className={`flex flex-col gap-1 transition-all duration-300 ${isMenuOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}>
-                                <div className="w-4 h-0.5 rounded-full" style={{ backgroundColor: 'var(--text-secondary)' }}></div>
-                                <div className="w-4 h-0.5 rounded-full" style={{ backgroundColor: 'var(--text-secondary)' }}></div>
-                                <div className="w-4 h-0.5 rounded-full" style={{ backgroundColor: 'var(--text-secondary)' }}></div>
-                            </div>
-
-                            {/* Hamburger/Close Icon - Overlays on menu open */}
-                            <div className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${isMenuOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}>
-                                <div className="w-8 h-8 rounded-full flex items-center justify-center"
-                                     style={{ backgroundColor: 'var(--surface-secondary)' }}>
-                                    <svg className="w-5 h-5" style={{ color: 'var(--text-secondary)' }}
-                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Active indicator dot */}
-                        {session && !isMenuOpen && (
-                            <div className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full border-2 animate-pulse"
-                                 style={{
-                                     backgroundColor: 'var(--success)',
-                                     borderColor: 'var(--background)'
-                                 }}></div>
-                        )}
-                    </button>
-                </div>
-
-                {/* Mobile Menu */}
-                <div className={`md:hidden transition-all duration-300 ease-in-out ${
-                    isMenuOpen
-                        ? 'max-h-96 opacity-100 pb-6'
-                        : 'max-h-0 opacity-0 overflow-hidden'
-                }`}>
-                    <div className="pt-4 space-y-2">
-                        {navigationItems.map((item) => (
-                            <a
-                                key={item.label}
-                                href={item.href}
-                                className="block px-3 py-2 text-base font-medium rounded-lg transition-all duration-200"
-                                style={{ color: 'var(--text-secondary)' }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'var(--button-hover)';
-                                    e.currentTarget.style.color = 'var(--text-primary)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'transparent';
-                                    e.currentTarget.style.color = 'var(--text-secondary)';
-                                }}
-                                onClick={() => setIsMenuOpen(false)}
-                            >
-                                {item.label}
-                            </a>
-                        ))}
-
-                        {/* Mobile Actions */}
-                        <div className="px-3 py-2 border-t mt-4 pt-4"
-                             style={{ borderColor: 'var(--border)' }}>
-                            <div className="flex items-center gap-4 mb-4">
-                                <button
-                                    onClick={toggleTheme}
-                                    className="flex items-center gap-2 px-3 py-2 text-base font-medium rounded-lg transition-all duration-200"
-                                    style={{ color: 'var(--text-secondary)' }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.backgroundColor = 'var(--button-hover)';
-                                        e.currentTarget.style.color = 'var(--text-primary)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor = 'transparent';
-                                        e.currentTarget.style.color = 'var(--text-secondary)';
-                                    }}
-                                >
-                                    {isDarkMode ? (
-                                        <>
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                                            </svg>
-                                            Light Mode
-                                        </>
-                                    ) : (
-                                        <>
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                                            </svg>
-                                            Dark Mode
-                                        </>
-                                    )}
-                                </button>
-                                <button
-                                    className="flex items-center gap-2 px-3 py-2 text-base font-medium rounded-lg transition-all duration-200"
-                                    style={{ color: 'var(--text-secondary)' }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.backgroundColor = 'var(--button-hover)';
-                                        e.currentTarget.style.color = 'var(--text-primary)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor = 'transparent';
-                                        e.currentTarget.style.color = 'var(--text-secondary)';
-                                    }}
-                                >
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                                    </svg>
-                                    Notifications
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="border-t" style={{ borderColor: 'var(--border)' }}>
-                            {session ? (
-                                <div className="space-y-3 pt-4">
-                                    <div className="flex items-center gap-3 px-3 py-2">
-                                        {session?.user?.image ? (
-                                            <Image
-                                                src={session.user.image}
-                                                alt="avatar"
-                                                width={40}
-                                                height={40}
-                                                className="w-10 h-10 rounded-full ring-2"
-                                                style={{
-                                                    '--tw-ring-color': 'var(--ring-color)'
-                                                } as React.CSSProperties}
-                                            />
-                                        ) : (
-                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
-                                                {session?.user?.name?.charAt(0) ?? "G"}
-                                            </div>
-                                        )}
-                                        <div>
-                                            <div className="font-medium" style={{ color: 'var(--text-primary)' }}>
-                                                {session?.user?.name ?? "Guest"}
-                                            </div>
-                                            <div className="text-sm" style={{ color: 'var(--text-tertiary)' }}>
-                                                {session?.user?.email ?? "Not signed in"}
-                                            </div>
+                                            <AvatarFallback className="bg-primary text-primary-foreground">
+                                                {getUserInitials(session.user.name)}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-56">
+                                    <DropdownMenuLabel>
+                                        <div className="flex flex-col space-y-1">
+                                            <p className="text-sm font-medium leading-none">
+                                                {session.user.name}
+                                            </p>
+                                            <p className="text-xs leading-none text-muted-foreground">
+                                                {session.user.email}
+                                            </p>
                                         </div>
-                                    </div>
-                                    <button
-                                        className="w-full text-left px-3 py-2 text-base font-medium rounded-lg transition-all duration-200"
-                                        style={{ color: 'var(--text-secondary)' }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'var(--button-hover)';
-                                            e.currentTarget.style.color = 'var(--text-primary)';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'transparent';
-                                            e.currentTarget.style.color = 'var(--text-secondary)';
-                                        }}
-                                        onClick={() => {
-                                            signOut();
-                                            setIsMenuOpen(false);
-                                        }}
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem asChild>
+                                        <Link href="/account" className="cursor-pointer">
+                                            <User className="mr-2 h-4 w-4" />
+                                            My Account
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                        onClick={handleSignOut}
+                                        className="cursor-pointer text-destructive focus:text-destructive"
                                     >
-                                        Sign out
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="pt-4">
-                                    <button
-                                        className="w-full px-3 py-2 text-base font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
-                                        onClick={() => {
-                                            handleSignIn();
-                                            setIsMenuOpen(false);
-                                        }}
-                                    >
-                                        Sign in with Google
-                                    </button>
-                                </div>
-                            )}
-                        </div>
+                                        <LogOut className="mr-2 h-4 w-4" />
+                                        Sign Out
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <Button variant="ghost" size="sm" asChild>
+                                <Link href="/signin">
+                                    <LogIn className="mr-2 h-4 w-4" />
+                                    Sign In
+                                </Link>
+                            </Button>
+                        )}
                     </div>
+
+                    {/* Mobile Menu Button */}
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="md:hidden h-9 w-9"
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    >
+                        {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                        <span className="sr-only">Toggle menu</span>
+                    </Button>
                 </div>
             </div>
-        </header>
-    );
 
+            {/* Mobile Navigation */}
+            {isMenuOpen && (
+                <div className="md:hidden border-t border-border/40 bg-background">
+                    <nav className="container flex flex-col gap-4 px-4 py-4">
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                {link.label}
+                            </Link>
+                        ))}
+
+                        <div className="border-t border-border/40 pt-4 mt-2">
+                            {status === "loading" ? (
+                                <div className="flex items-center gap-3">
+                                    <div className="h-10 w-10 rounded-full bg-muted animate-pulse" />
+                                    <div className="flex-1 space-y-2">
+                                        <div className="h-4 bg-muted rounded animate-pulse" />
+                                        <div className="h-3 bg-muted rounded w-2/3 animate-pulse" />
+                                    </div>
+                                </div>
+                            ) : session?.user ? (
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-3">
+                                        <Avatar className="h-10 w-10">
+                                            <AvatarImage
+                                                src={session.user.image || undefined}
+                                                alt={session.user.name || "User"}
+                                            />
+                                            <AvatarFallback className="bg-primary text-primary-foreground">
+                                                {getUserInitials(session.user.name)}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-medium truncate">
+                                                {session.user.name}
+                                            </p>
+                                            <p className="text-xs text-muted-foreground truncate">
+                                                {session.user.email}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <Button
+                                        variant="outline"
+                                        className="w-full justify-start text-destructive hover:text-destructive"
+                                        onClick={() => {
+                                            setIsMenuOpen(false)
+                                            handleSignOut()
+                                        }}
+                                    >
+                                        <LogOut className="mr-2 h-4 w-4" />
+                                        Sign Out
+                                    </Button>
+                                </div>
+                            ) : (
+                                <Button
+                                    variant="default"
+                                    className="w-full justify-start"
+                                    asChild
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    <Link href="/signin">
+                                        <LogIn className="mr-2 h-4 w-4" />
+                                        Sign In
+                                    </Link>
+                                </Button>
+                            )}
+                        </div>
+                    </nav>
+                </div>
+            )}
+        </header>
+    )
 }

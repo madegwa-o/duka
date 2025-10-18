@@ -1,166 +1,56 @@
-// lib/users.ts - Updated with roles array support and proper types
-import { connectToDatabase } from "@/lib/db";
-import { User, type IUser, type UserRole } from "@/models/User";
-import { Types } from "mongoose";
+import { connectToDatabase } from "./db"
+import { User, Role, type IUser } from "@/models/User"
 
-export type AppUser = {
-    id: string;
-    name: string;
-    email: string;
-    image?: string;
-    roles: UserRole[]; // Always use roles array
-};
-
-export async function getUserByEmail(email: string): Promise<AppUser | null> {
-    try {
-        await connectToDatabase();
-        const user = await User.findOne({ email: email.toLowerCase() });
-
-        if (!user) return null;
-
-        return {
-            id: (user._id as Types.ObjectId).toString(),
-            name: user.name,
-            email: user.email,
-            image: user.image,
-            roles: user.roles || ["tenant"],
-        };
-    } catch (error) {
-        console.error("Error getting user by email:", error);
-        return null;
-    }
+interface CreateUserData {
+    name: string
+    email: string
+    image?: string
+    roles?: Role[]
+    password?: string
 }
 
-export async function addOrUpdateUser(userData: Omit<AppUser, 'id'> & { id?: string }): Promise<AppUser> {
-    try {
-        await connectToDatabase();
+export async function addOrUpdateUser(userData: CreateUserData): Promise<IUser> {
+    await connectToDatabase()
 
-        // Prepare update data with proper typing
-        const updateData: {
-            name: string;
-            email: string;
-            image?: string;
-            roles?: UserRole[];
-        } = {
-            name: userData.name,
-            email: userData.email.toLowerCase(),
-            image: userData.image,
-        };
+    const existingUser = await User.findOne({ email: userData.email })
 
-        // Handle roles
-        if (userData.roles && userData.roles.length > 0) {
-            updateData.roles = userData.roles;
-        } else {
-            // Default to tenant role if no role specified and user is new
-            const existingUser = await User.findOne({ email: userData.email.toLowerCase() });
-            if (!existingUser) {
-                updateData.roles = ["tenant"];
-            }
-        }
-
-        const user = await User.findOneAndUpdate(
-            { email: userData.email.toLowerCase() },
-            updateData,
-            {
-                upsert: true,
-                new: true, // Return the updated document
-                runValidators: true
-            }
-        );
-
-        if (!user) {
-            throw new Error("Failed to insert or update user");
-        }
-
-        return {
-            id: (user._id as Types.ObjectId).toString(),
-            name: user.name,
-            email: user.email,
-            image: user.image,
-            roles: user.roles || ["tenant"],
-        };
-    } catch (error) {
-        console.error("Error adding or updating user:", error);
-        throw new Error("Failed to insert or update user");
+    if (existingUser) {
+        // Update existing user
+        existingUser.name = userData.name
+        if (userData.image) existingUser.image = userData.image
+        existingUser.lastLogin = new Date()
+        await existingUser.save()
+        return existingUser
     }
+
+    // Create new user
+    const newUser = await User.create({
+        name: userData.name,
+        email: userData.email,
+        image: userData.image,
+        roles: userData.roles || [Role.USER],
+        password: userData.password,
+    })
+
+    return newUser
 }
 
-// Helper functions for role management
-export async function addUserRole(email: string, role: UserRole): Promise<AppUser | null> {
-    try {
-        await connectToDatabase();
-
-        const user = await User.findOne({ email: email.toLowerCase() });
-        if (!user) return null;
-
-        if (!user.hasRole(role)) {
-            user.addRole(role);
-            await user.save();
-        }
-
-        return {
-            id: (user._id as Types.ObjectId).toString(),
-            name: user.name,
-            email: user.email,
-            image: user.image,
-            roles: user.roles || ["tenant"],
-        };
-    } catch (error) {
-        console.error("Error adding user role:", error);
-        return null;
-    }
+export async function getUserByEmail(email: string): Promise<IUser | null> {
+    await connectToDatabase()
+    return User.findOne({ email }).select("+password")
 }
 
-export async function removeUserRole(email: string, role: UserRole): Promise<AppUser | null> {
-    try {
-        await connectToDatabase();
-
-        const user = await User.findOne({ email: email.toLowerCase() });
-        if (!user) return null;
-
-        if (user.hasRole(role)) {
-            user.removeRole(role);
-            // Ensure user always has at least one role
-            if (user.roles.length === 0) {
-                user.roles = ["tenant"];
-            }
-            await user.save();
-        }
-
-        return {
-            id: (user._id as Types.ObjectId).toString(),
-            name: user.name,
-            email: user.email,
-            image: user.image,
-            roles: user.roles || ["tenant"],
-        };
-    } catch (error) {
-        console.error("Error removing user role:", error);
-        return null;
-    }
+export async function getUserById(id: string): Promise<IUser | null> {
+    await connectToDatabase()
+    return User.findById(id)
 }
 
-export async function updateUserRoles(email: string, roles: UserRole[]): Promise<AppUser | null> {
-    try {
-        await connectToDatabase();
+export async function updateUserPassword(email: string, password: string): Promise<IUser | null> {
+    await connectToDatabase()
+    const user = await User.findOne({ email })
+    if (!user) return null
 
-        const user = await User.findOneAndUpdate(
-            { email: email.toLowerCase() },
-            { roles: roles.length > 0 ? roles : ["tenant"] },
-            { new: true }
-        );
-
-        if (!user) return null;
-
-        return {
-            id: (user._id as Types.ObjectId).toString(),
-            name: user.name,
-            email: user.email,
-            image: user.image,
-            roles: user.roles || ["tenant"],
-        };
-    } catch (error) {
-        console.error("Error updating user roles:", error);
-        return null;
-    }
+    user.password = password
+    await user.save()
+    return user
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { ShoppingBag, ShoppingCart, Store} from "lucide-react";
+import {User, ScanIcon, PhoneCallIcon} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -11,20 +11,21 @@ export default function MobileBottomNav() {
     const [lastScrollY, setLastScrollY] = useState(0);
 
     const tabs = [
+
         {
-            href: "/",
-            icon: ShoppingBag, // or keep Home
-            label: "Buy",
+            href: "/consult",
+            icon: PhoneCallIcon,
+            label: "Chat",
         },
         {
-            href: "/my-cart",
-            icon: ShoppingCart,
-            label: "My Cart",
+            href: "/scan",
+            icon: ScanIcon,
+            label: "Scan Image",
         },
         {
-            href: "/my-shop",
-            icon: Store, // or Storefront
-            label: "My Shop",
+            href: "/history",
+            icon: User,
+            label: "My History",
         },
     ];
 

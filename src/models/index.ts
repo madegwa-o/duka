@@ -1,8 +1,7 @@
-// src/models/index.ts
-import { Apartment } from "./Apartment";
-import { House } from "./House";
+import { Institution } from "./Institution";
 import { User } from "./User";
 import { Payment } from "./Payment";
+import { Subscription } from "./Subscription";
 
 // Export them so they can still be imported directly if needed
-export { Apartment, House, User, Payment };
+export { Institution, User, Payment, Subscription };
