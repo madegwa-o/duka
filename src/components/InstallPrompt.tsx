@@ -116,8 +116,8 @@ export default function InstallPrompt() {
                         <div className="flex items-center gap-3">
                             <img src="/android-chrome-192x192.png" alt="Kia" className="w-12 h-12 rounded-lg" />
                             <div>
-                                <h3 className="font-semibold text-card-foreground">Install Kia</h3>
-                                <p className="text-sm text-muted-foreground">Get quick access to your health assistant</p>
+                                <h3 className="font-semibold text-card-foreground">Install Duka</h3>
+                                <p className="text-sm text-muted-foreground">Get quick access to your shop Insights</p>
                             </div>
                         </div>
                         <button
@@ -153,7 +153,7 @@ export default function InstallPrompt() {
                             </div>
                             <div>
                                 <h3 className="font-semibold text-card-foreground">Enable Notifications</h3>
-                                <p className="text-sm text-muted-foreground">Stay updated with your health insights</p>
+                                <p className="text-sm text-muted-foreground">Stay updated with your shop listings</p>
                             </div>
                         </div>
                         <button
