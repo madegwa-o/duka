@@ -80,7 +80,7 @@ export default function ShopPage() {
                         <ArrowLeft className="h-4 w-4" />
                         <span className="text-sm">Back to Gallery</span>
                     </Link>
-                    <h1 className="font-sans text-2xl font-medium tracking-tight text-foreground">Art Galore</h1>
+                    <h1 className="font-sans text-2xl font-medium tracking-tight text-foreground">Karu Main</h1>
                     <div className="w-24" />
                 </div>
             </header>

@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-    const baseUrl = "https://kia.aistartupclub.com";
+    const baseUrl = "https://duka.aistartupclub.com";
 
     const pages = [
         "",
-        "/consult",
+        "/shop",
         "/scan",
         "/pricing",
         "/history",

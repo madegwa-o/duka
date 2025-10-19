@@ -5,13 +5,15 @@
 import { Types, Document, Schema, models, model } from "mongoose";
 import { ICategory } from "@/models/Category";
 import { IShop } from "@/models/Shop";
+import { IImage } from "@/models/Image";
 
 export interface IProduct extends Document {
     _id: Types.ObjectId;
     name: string;
     category: Types.ObjectId | ICategory;
-    shop: Types.ObjectId | IShop; // ✅ Fixed: was IProduct, now IShop
+    shop: Types.ObjectId | IShop;
     price: number;
+    images: (Types.ObjectId | IImage)[]; // ✅ Added images array referencing Image model
     createdAt: Date;
     updatedAt: Date;
 }
@@ -27,12 +29,12 @@ const ProductSchema = new Schema<IProduct>(
         },
         shop: {
             type: Schema.Types.ObjectId,
-            ref: 'Shop', // ✅ Added ref
+            ref: 'Shop',
             required: [true, "Shop is required"]
         },
         category: {
             type: Schema.Types.ObjectId,
-            ref: 'Category', // ✅ Added ref
+            ref: 'Category',
             required: [true, "Category is required"]
         },
         price: {
@@ -40,6 +42,10 @@ const ProductSchema = new Schema<IProduct>(
             required: [true, "Price is required"],
             min: [0, "Price cannot be negative"]
         },
+        images: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Image'
+        }],
     },
     {
         timestamps: true,

@@ -1,9 +1,11 @@
+
 // ============================================
 // models/User.ts
 // ============================================
 import { Schema, model, models, Types, Document } from "mongoose";
 import bcrypt from "bcryptjs";
 import { IShop } from "./Shop";
+import { IImage } from "./Image";
 
 export enum Role {
 	ADMIN = "ADMIN",
@@ -25,6 +27,7 @@ export interface IUser extends Document {
 	phone?: string;
 	address?: string;
 	shops: (Types.ObjectId | IShop)[];
+	gallery: (Types.ObjectId | IImage)[]; // ✅ Added gallery for user's images
 	roles: Role[];
 	accountType: AccountType;
 	isActive: boolean;
@@ -73,6 +76,10 @@ const UserSchema = new Schema<IUser>(
 			type: Schema.Types.ObjectId,
 			ref: "Shop"
 		}],
+		gallery: [{
+			type: Schema.Types.ObjectId,
+			ref: "Image"
+		}],
 		accountType: {
 			type: String,
 			enum: Object.values(AccountType),
@@ -118,8 +125,20 @@ UserSchema.methods.addRole = function (role: Role) {
 };
 
 UserSchema.methods.removeRole = function (role: Role) {
-	this.roles = this.roles.filter((r:Role) => r !== role);
+	this.roles = this.roles.filter((r: Role) => r !== role);
 };
 
 // 🚀 Export
 export const User = models.User || model<IUser>("User", UserSchema);
+
+
+
+
+
+
+
+
+
+
+
+

@@ -41,11 +41,8 @@ export function Header() {
 
     const navLinks = [
         { label: "Buy", href: "/" },
-        { label: "My Cart", href: "/my-cart" },
+        { label: "My Saves", href: "/my-saves" },
         { label: "My Shop", href: "/my-shop" },
-        { href: "/history", label: "My History" },
-        { href: "/pricing", label: "Pricing" },
-        { href: "/docs", label: "Docs" },
         { href: "/share", label: "Share" },
         { href: "/account", label: "My Account" },
     ]

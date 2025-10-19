@@ -4,6 +4,8 @@
 import { connectToDatabase } from "@/lib/db";
 import { User, Role, IUser } from "@/models/User";
 
+
+
 export type AppUser = {
     id: string;
     name: string;

@@ -1,6 +1,7 @@
 "use client";
 
-import {User, ScanIcon, PhoneCallIcon} from "lucide-react";
+import { ShoppingBag, Heart, Store } from "lucide-react";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -11,23 +12,23 @@ export default function MobileBottomNav() {
     const [lastScrollY, setLastScrollY] = useState(0);
 
     const tabs = [
-
         {
-            href: "/consult",
-            icon: PhoneCallIcon,
-            label: "Chat",
+            href: "/",
+            icon: ShoppingBag, // Represents buying or browsing products
+            label: "Buy",
         },
         {
-            href: "/scan",
-            icon: ScanIcon,
-            label: "Scan Image",
+            href: "/my-saves",
+            icon: Heart, // Universally recognized for saved/favorite items
+            label: "My Saves",
         },
         {
-            href: "/history",
-            icon: User,
-            label: "My History",
+            href: "/my-shop",
+            icon: Store, // Perfect for representing the user's shop
+            label: "My Shop",
         },
     ];
+
 
     // Hide/show nav on scroll
     useEffect(() => {

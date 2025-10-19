@@ -88,26 +88,6 @@ export default function AccountPage() {
         return null
     }
 
-    const consultationHistory = [
-        {
-            id: 1,
-            date: "2025-01-10",
-            topic: "Headache and fever symptoms",
-            recommendation: "Primary Care Physician",
-        },
-        {
-            id: 2,
-            date: "2025-01-08",
-            topic: "Skin rash on arm",
-            recommendation: "Dermatologist",
-        },
-        {
-            id: 3,
-            date: "2025-01-05",
-            topic: "Lower back pain",
-            recommendation: "Physical Therapist",
-        },
-    ]
 
      const handleToggle = async (checked: boolean) => {
         setIsProcessingPush(true);
@@ -136,7 +116,6 @@ export default function AccountPage() {
                 <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
                     <TabsTrigger value="profile">Profile</TabsTrigger>
                     <TabsTrigger value="subscription">Subscription</TabsTrigger>
-                    <TabsTrigger value="history">History</TabsTrigger>
                     <TabsTrigger value="settings">Settings</TabsTrigger>
                 </TabsList>
 
@@ -286,37 +265,6 @@ export default function AccountPage() {
                                     Cancel Subscription
                                 </Button>
                             </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-
-                <TabsContent value="history" className="space-y-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <History className="h-5 w-5" />
-                                Consultation History
-                            </CardTitle>
-                            <CardDescription>View your past consultations and recommendations.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                {consultationHistory.map((consultation) => (
-                                    <div key={consultation.id} className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                                        <div className="flex items-start justify-between mb-2">
-                                            <h3 className="font-semibold">{consultation.topic}</h3>
-                                            <span className="text-muted-foreground text-xs">{consultation.date}</span>
-                                        </div>
-                                        <p className="text-muted-foreground text-sm mb-3">Recommended: {consultation.recommendation}</p>
-                                        <Button variant="outline" size="sm" className="bg-transparent">
-                                            View Details
-                                        </Button>
-                                    </div>
-                                ))}
-                            </div>
-                            <Button variant="outline" className="w-full mt-4 bg-transparent">
-                                Load More
-                            </Button>
                         </CardContent>
                     </Card>
                 </TabsContent>

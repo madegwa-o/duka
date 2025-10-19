@@ -1,14 +1,16 @@
+
 // ============================================
 // models/Shop.ts
 // ============================================
 import { Types, Document, Schema, model, models } from "mongoose";
 import { IUser } from "@/models/User";
 import { IProduct } from "@/models/Product";
+import { IImage } from "@/models/Image";
 
 export interface IShop extends Document {
     _id: Types.ObjectId;
     name: string;
-    image?: string;
+    image?: Types.ObjectId | IImage; // ✅ Changed to reference Image model
     owners: (Types.ObjectId | IUser)[];
     products: (Types.ObjectId | IProduct)[];
     createdAt: Date;
@@ -25,14 +27,15 @@ const ShopSchema = new Schema<IShop>(
             maxlength: 100,
         },
         image: {
-            type: String,
-            default: "",
+            type: Schema.Types.ObjectId,
+            ref: 'Image',
+            default: null,
         },
         owners: [{
             type: Schema.Types.ObjectId,
             ref: 'User',
             required: true
-        }], // ✅ Array for multiple owners
+        }],
         products: [{
             type: Schema.Types.ObjectId,
             ref: "Product"
