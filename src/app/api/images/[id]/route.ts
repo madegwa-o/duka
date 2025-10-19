@@ -1,4 +1,3 @@
-
 // ============================================
 // app/api/images/[id]/route.ts
 // ============================================
@@ -8,14 +7,13 @@ import { Image } from "@/models/Image";
 import { User } from "@/models/User";
 import { Shop } from "@/models/Shop";
 import { Product } from "@/models/Product";
-import {connectToDatabase} from "@/lib/db";
+import { connectToDatabase } from "@/lib/db";
 
 // DELETE - Delete an image
 export async function DELETE(
+    req: NextRequest,
     context: { params: Promise<{ id: string }> }
 ) {
-
-
     try {
         const session = await getServerSession();
 
@@ -26,7 +24,6 @@ export async function DELETE(
             );
         }
 
-
         const { id } = await context.params;
         const imageId = id;
 
@@ -34,7 +31,6 @@ export async function DELETE(
 
         // Find user by email
         const user = await User.findOne({ email: session.user.email });
-
         if (!user) {
             return NextResponse.json(
                 { success: false, error: "User not found" },
@@ -44,7 +40,6 @@ export async function DELETE(
 
         // Find the image
         const image = await Image.findById(imageId);
-
         if (!image) {
             return NextResponse.json(
                 { success: false, error: "Image not found" },
@@ -52,7 +47,7 @@ export async function DELETE(
             );
         }
 
-        // Check if user owns this image
+        // Verify ownership
         if (image.owner.toString() !== user._id.toString()) {
             return NextResponse.json(
                 { success: false, error: "Unauthorized to delete this image" },
@@ -60,26 +55,19 @@ export async function DELETE(
             );
         }
 
-        // Check if image is being used in any shop
+        // Prevent deletion if image is in use
         const shopsUsingImage = await Shop.find({ image: imageId });
         if (shopsUsingImage.length > 0) {
             return NextResponse.json(
-                {
-                    success: false,
-                    error: "Cannot delete image. It is being used by one or more shops."
-                },
+                { success: false, error: "Image is used by one or more shops." },
                 { status: 400 }
             );
         }
 
-        // Check if image is being used in any product
         const productsUsingImage = await Product.find({ images: imageId });
         if (productsUsingImage.length > 0) {
             return NextResponse.json(
-                {
-                    success: false,
-                    error: "Cannot delete image. It is being used by one or more products."
-                },
+                { success: false, error: "Image is used by one or more products." },
                 { status: 400 }
             );
         }
@@ -90,10 +78,10 @@ export async function DELETE(
         );
         await user.save();
 
-        // Delete the image
+        // Delete image
         await Image.findByIdAndDelete(imageId);
 
-        // Fetch remaining images for the user
+        // Return updated gallery
         const images = await Image.find({ owner: user._id })
             .sort({ createdAt: -1 })
             .lean();
@@ -101,7 +89,7 @@ export async function DELETE(
         return NextResponse.json({
             success: true,
             message: "Image deleted successfully",
-            images: images,
+            images,
         });
     } catch (error) {
         console.error("Error deleting image:", error);
@@ -114,9 +102,9 @@ export async function DELETE(
 
 // GET - Get a single image by ID
 export async function GET(
+    req: NextRequest,
     context: { params: Promise<{ id: string }> }
 ) {
-
     try {
         const session = await getServerSession();
 
@@ -128,14 +116,11 @@ export async function GET(
         }
 
         const { id } = await context.params;
-
         const imageId = id;
 
         await connectToDatabase();
 
-        // Find user by email
         const user = await User.findOne({ email: session.user.email });
-
         if (!user) {
             return NextResponse.json(
                 { success: false, error: "User not found" },
@@ -143,9 +128,7 @@ export async function GET(
             );
         }
 
-        // Find the image
         const image = await Image.findById(imageId).lean();
-
         if (!image) {
             return NextResponse.json(
                 { success: false, error: "Image not found" },
@@ -155,7 +138,7 @@ export async function GET(
 
         return NextResponse.json({
             success: true,
-            image: image,
+            image,
         });
     } catch (error) {
         console.error("Error fetching image:", error);
