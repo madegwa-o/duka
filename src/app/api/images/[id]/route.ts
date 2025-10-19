@@ -12,9 +12,10 @@ import {connectToDatabase} from "@/lib/db";
 
 // DELETE - Delete an image
 export async function DELETE(
-    req: NextRequest,
-    { params }: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
 ) {
+
+
     try {
         const session = await getServerSession();
 
@@ -25,7 +26,9 @@ export async function DELETE(
             );
         }
 
-        const imageId = params.id;
+
+        const { id } = await context.params;
+        const imageId = id;
 
         await connectToDatabase();
 
@@ -111,9 +114,9 @@ export async function DELETE(
 
 // GET - Get a single image by ID
 export async function GET(
-    req: NextRequest,
-    { params }: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
 ) {
+
     try {
         const session = await getServerSession();
 
@@ -124,7 +127,9 @@ export async function GET(
             );
         }
 
-        const imageId = params.id;
+        const { id } = await context.params;
+
+        const imageId = id;
 
         await connectToDatabase();
 
