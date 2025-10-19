@@ -41,8 +41,10 @@ interface PopulatedProduct {
 // GET - Get a single product by ID
 export async function GET(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await context.params;
+
     try {
         const session = await getServerSession();
 
@@ -53,7 +55,7 @@ export async function GET(
             );
         }
 
-        const productId = params.id;
+        const productId = id;
 
         await connectToDatabase();
 
@@ -111,8 +113,10 @@ export async function GET(
 // PUT - Update a product
 export async function PUT(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await context.params;
+
     try {
         const session = await getServerSession();
 
@@ -123,7 +127,7 @@ export async function PUT(
             );
         }
 
-        const productId = params.id;
+        const productId = id;
         const body = await req.json();
         const { name, price, category, images } = body;
 

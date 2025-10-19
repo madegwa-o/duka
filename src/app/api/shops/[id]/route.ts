@@ -39,8 +39,9 @@ interface ShopDoc {
 // GET - Get a single shop by ID
 export async function GET(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await context.params;
     try {
         const session = await getServerSession();
 
@@ -51,7 +52,7 @@ export async function GET(
             );
         }
 
-        const shopId = params.id;
+        const shopId = id;
 
         await connectToDatabase();
 
@@ -116,8 +117,9 @@ export async function GET(
 // PUT - Update a shop
 export async function PUT(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
 ) {
+    const { id } = await context.params;
     try {
         const session = await getServerSession();
 
@@ -128,7 +130,7 @@ export async function PUT(
             );
         }
 
-        const shopId = params.id;
+        const shopId = id;
         const body = await req.json();
         const { name, image } = body;
 
