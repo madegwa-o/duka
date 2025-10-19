@@ -37,7 +37,7 @@ export default function SharePage() {
                         </div>
 
                         <ShareComponent
-                            url="https://kia.aistartupclub.com"
+                            url="https://duka.aistartupclub.com"
                             title="Join the Smart Care Revolution 🚀"
                             description="Kia is redefining how we access healthcare — instant, secure, and powered by AI. Share and invite others to experience the future of medicine."
                             hashtag="#KiaAI #DigitalHealth"

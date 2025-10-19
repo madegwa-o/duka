@@ -62,3 +62,14 @@ export async function addOrUpdateUser(data: {
 
     return mapUser(newUser);
 }
+
+
+export async function updateUserPassword(email: string, password: string): Promise<IUser | null> {
+    await connectToDatabase()
+    const user = await User.findOne({ email })
+    if (!user) return null
+
+    user.password = password
+    await user.save()
+    return user
+}

@@ -110,7 +110,7 @@ export default function ShopProductManager() {
 
     useEffect(() => {
         if (status === "unauthenticated") {
-            router.push(`/signin?callbackUrl=${encodeURIComponent("/shop-manager")}`)
+            router.push(`/signin?callbackUrl=${encodeURIComponent("/my-shop")}`)
         }
     }, [status, router])
 
