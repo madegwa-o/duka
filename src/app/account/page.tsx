@@ -115,8 +115,8 @@ export default function AccountPage() {
             <Tabs defaultValue="profile" className="space-y-6">
                 <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
                     <TabsTrigger value="profile">Profile</TabsTrigger>
-                    <TabsTrigger value="subscription">Subscription</TabsTrigger>
                     <TabsTrigger value="settings">Settings</TabsTrigger>
+                    <TabsTrigger value="subscription">Subscription</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="profile" className="space-y-6">
