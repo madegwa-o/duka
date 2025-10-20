@@ -1,3 +1,4 @@
+'use client'
 
 import MasonryFeeds from "@/components/masonry-feeds";
 

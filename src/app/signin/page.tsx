@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle, Loader2 } from "lucide-react"
+import { AlertCircle, Loader2, ArrowRight } from "lucide-react"
 import { Separator } from "@radix-ui/react-dropdown-menu"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -74,8 +74,8 @@ export default function SignInPage() {
 
     if (!mounted || status === "loading") {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="min-h-screen flex items-center justify-center bg-background">
+                <Loader2 className="h-8 w-8 animate-spin text-foreground" />
             </div>
         )
     }
@@ -84,90 +84,41 @@ export default function SignInPage() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-background">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                    <p className="text-muted-foreground">Redirecting to your store...</p>
+                    <Loader2 className="h-8 w-8 animate-spin text-foreground mx-auto mb-4" />
+                    <p className="text-sm text-muted-foreground">Redirecting...</p>
                 </div>
             </div>
         )
     }
 
     return (
-        <div className="min-h-screen flex flex-col-reverse lg:flex-row">
-            {/* Left Side - Hero Section */}
-            <div className="flex-1 relative overflow-hidden bg-surface-secondary">
-                {/* Subtle Background Pattern */}
-                <div className="absolute inset-0 opacity-10">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0.1),transparent_50%)]"></div>
-                    <div className="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_48%,rgba(0,0,0,0.03)_49%,rgba(0,0,0,0.03)_51%,transparent_52%)] bg-[length:40px_40px]"></div>
+        <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8">
+            <div className="w-full max-w-[400px]">
+                {/* Logo */}
+                <div className="text-center mb-8">
+                    <h1 className="text-[28px] font-semibold tracking-tight text-foreground mb-2">Duka</h1>
+                    <p className="text-sm text-muted-foreground">Log in to your store</p>
                 </div>
 
-                {/* Hero Content */}
-                <div className="relative z-10 flex flex-col justify-center h-full px-8 lg:px-16 py-16">
-                    <div className="max-w-xl">
-                        {/* Logo */}
-                        <div className="mb-8">
-                            <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">Duka</h1>
-                            <div className="w-20 h-1 bg-foreground/20 rounded-full"></div>
-                        </div>
-
-                        {/* Hero Text */}
-                        <h2 className="text-2xl lg:text-3xl font-semibold text-foreground mb-6 leading-tight">
-                            Start your online store and reach customers everywhere
-                        </h2>
-                        <p className="text-lg text-text-secondary mb-8 leading-relaxed">
-                            Join thousands of merchants building successful businesses on Duka. Set up your shop, list products, and start selling today.
-                        </p>
-
-                        {/* Features */}
-                        <div className="space-y-4">
-                            <div className="flex items-start gap-3">
-                                <div className="mt-1 w-5 h-5 rounded-full bg-foreground/10 flex items-center justify-center flex-shrink-0">
-                                    <div className="w-2 h-2 rounded-full bg-foreground"></div>
-                                </div>
-                                <p className="text-text-secondary">Easy store setup and product management</p>
-                            </div>
-                            <div className="flex items-start gap-3">
-                                <div className="mt-1 w-5 h-5 rounded-full bg-foreground/10 flex items-center justify-center flex-shrink-0">
-                                    <div className="w-2 h-2 rounded-full bg-foreground"></div>
-                                </div>
-                                <p className="text-text-secondary">Secure payments and order tracking</p>
-                            </div>
-                            <div className="flex items-start gap-3">
-                                <div className="mt-1 w-5 h-5 rounded-full bg-foreground/10 flex items-center justify-center flex-shrink-0">
-                                    <div className="w-2 h-2 rounded-full bg-foreground"></div>
-                                </div>
-                                <p className="text-text-secondary">Grow your business with powerful tools</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Decorative Elements */}
-                <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-foreground/5 rounded-full blur-3xl"></div>
-                <div className="absolute -top-32 -left-32 w-96 h-96 bg-foreground/5 rounded-full blur-3xl"></div>
-            </div>
-
-            {/* Right Side - Sign In Form */}
-            <div className="flex-1 flex items-center justify-center p-8 lg:p-16 bg-background">
-                <Card className="w-full max-w-md">
-                    <CardHeader className="space-y-1">
-                        <CardTitle className="text-2xl font-bold text-center">Welcome to Duka</CardTitle>
-                        <CardDescription className="text-center">Sign in to access your Shop Account</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
+                {/* Main Card */}
+                <Card className="border border-border shadow-sm">
+                    <CardContent className="pt-6 pb-8 px-6">
                         {error && (
-                            <Alert variant="destructive">
+                            <Alert variant="destructive" className="mb-6 bg-red-50 border-red-200 dark:bg-red-950/20 dark:border-red-900/30">
                                 <AlertCircle className="h-4 w-4" />
-                                <AlertDescription>{error}</AlertDescription>
+                                <AlertDescription className="text-sm">{error}</AlertDescription>
                             </Alert>
                         )}
 
-                        <Button onClick={handleGoogleSignIn} disabled={isLoading} className="w-full" size="lg">
+                        {/* Google Sign In */}
+                        <Button
+                            onClick={handleGoogleSignIn}
+                            disabled={isLoading}
+                            className="w-full bg-white hover:bg-gray-50 text-gray-900 border border-gray-300 shadow-none h-11 font-medium dark:bg-gray-900 dark:text-white dark:border-gray-700 dark:hover:bg-gray-800"
+                            variant="outline"
+                        >
                             {isLoading ? (
-                                <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Signing in...
-                                </>
+                                <Loader2 className="h-4 w-4 animate-spin" />
                             ) : (
                                 <>
                                     <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
@@ -193,18 +144,22 @@ export default function SignInPage() {
                             )}
                         </Button>
 
-                        <div className="relative">
+                        {/* Divider */}
+                        <div className="relative my-6">
                             <div className="absolute inset-0 flex items-center">
-                                <Separator />
+                                <div className="w-full border-t border-border"></div>
                             </div>
-                            <div className="relative flex justify-center text-xs uppercase">
-                                <span className="bg-card px-2 text-muted-foreground">Or continue with email</span>
+                            <div className="relative flex justify-center text-xs">
+                                <span className="bg-card px-2 text-muted-foreground uppercase tracking-wide">Or</span>
                             </div>
                         </div>
 
+                        {/* Email/Password Form */}
                         <form onSubmit={handleCredentialsSignIn} className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="email">Email</Label>
+                                <Label htmlFor="email" className="text-sm font-medium text-foreground">
+                                    Email
+                                </Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -213,10 +168,13 @@ export default function SignInPage() {
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                     disabled={isCredentialsLoading}
+                                    className="h-11 bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:border-gray-900 dark:focus:border-gray-400 focus:ring-0"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="password">Password</Label>
+                                <Label htmlFor="password" className="text-sm font-medium text-foreground">
+                                    Password
+                                </Label>
                                 <Input
                                     id="password"
                                     type="password"
@@ -225,25 +183,47 @@ export default function SignInPage() {
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
                                     disabled={isCredentialsLoading}
+                                    className="h-11 bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 focus:border-gray-900 dark:focus:border-gray-400 focus:ring-0"
                                 />
                             </div>
-                            <Button type="submit" disabled={isCredentialsLoading} className="w-full bg-transparent" variant="outline">
+
+                            <Button
+                                type="submit"
+                                disabled={isCredentialsLoading}
+                                className="w-full bg-gray-900 hover:bg-gray-800 text-white h-11 font-medium shadow-none dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
+                            >
                                 {isCredentialsLoading ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Signing in...
-                                    </>
+                                    <Loader2 className="h-4 w-4 animate-spin" />
                                 ) : (
-                                    "Sign in with Email"
+                                    <>
+                                        Continue
+                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                    </>
                                 )}
                             </Button>
                         </form>
-
-                        <p className="text-center text-muted-foreground text-sm">
-                            New users can set up a password in account settings after signing in with Google.
-                        </p>
                     </CardContent>
                 </Card>
+
+                {/* Footer Text */}
+                <div className="mt-6 text-center">
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                        New to Duka?{" "}
+                        <button className="text-foreground underline hover:no-underline font-medium">
+                            Get started
+                        </button>
+                    </p>
+                </div>
+
+                {/* Additional Info */}
+                <div className="mt-8 pt-6 border-t border-border text-center">
+                    <p className="text-xs text-muted-foreground">
+                        By continuing, you agree to Duka&#39;s{" "}
+                        <a href="#" className="underline hover:no-underline">Terms of Service</a>
+                        {" "}and{" "}
+                        <a href="#" className="underline hover:no-underline">Privacy Policy</a>
+                    </p>
+                </div>
             </div>
         </div>
     );

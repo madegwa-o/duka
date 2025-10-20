@@ -59,7 +59,7 @@ export default function MasonryFeeds() {
             setLoading(true);
             setError(null);
 
-            const response = await fetch(`/api/products?page=${pageNum}&limit=20&sortBy=createdAt&sortOrder=desc`);
+            const response = await fetch(`/api/feeds?page=${pageNum}&limit=20&sortBy=createdAt&sortOrder=desc`);
 
             if (!response.ok) {
                 throw new Error('Failed to fetch products');
@@ -181,7 +181,7 @@ export default function MasonryFeeds() {
                                     {product.name}
                                 </h3>
                                 <p className="mt-1 text-xs text-muted-foreground">
-                                    ${product.price.toFixed(2)}
+                                    sh{product.price.toFixed(2)}
                                 </p>
                                 <p className="mt-1 text-xs text-muted-foreground/70">
                                     {product.shop.name}

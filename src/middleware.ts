@@ -6,6 +6,10 @@ import { NextResponse } from "next/server"
 const PUBLIC_ROUTES = [
     "/",
     "/api/images/**",
+    "/api/feeds",
+    "/api/feedshop/**", // Add this line
+    "/api/r2/images/**",
+    "/shop/**",
     "/signin",
     "/pricing",
     "/docs",
@@ -27,7 +31,14 @@ const STATIC_ASSETS = [
 
 // Helper function to check if path matches any pattern
 const matchesPattern = (pathname: string, patterns: string[]): boolean => {
-    return patterns.some(pattern => pathname.startsWith(pattern));
+    return patterns.some(pattern => {
+        if (pattern.endsWith('/**')) {
+            // Handle wildcard patterns
+            const base = pattern.slice(0, -3);
+            return pathname.startsWith(base);
+        }
+        return pathname === pattern || pathname.startsWith(pattern);
+    });
 };
 
 export default withAuth(
@@ -60,7 +71,7 @@ export default withAuth(
                 }
 
                 // Allow public routes
-                if (PUBLIC_ROUTES.includes(pathname)) {
+                if (matchesPattern(pathname, PUBLIC_ROUTES)) {
                     return true;
                 }
 
