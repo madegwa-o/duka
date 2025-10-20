@@ -1,4 +1,5 @@
-import { MasonryGallery } from "@/components/masonry-gallery"
+
+import MasonryFeeds from "@/components/masonry-feeds";
 
 export default function Home() {
     return (
@@ -13,7 +14,8 @@ export default function Home() {
                     </p>
                 </div>
 
-                <MasonryGallery />
+
+                <MasonryFeeds />
             </main>
 
             <footer className="mt-24 border-t border-border bg-muted/30">
