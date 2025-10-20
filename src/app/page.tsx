@@ -10,7 +10,7 @@ export default function Home() {
                         Your Campus Marketplace
                     </h2>
                     <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-                        Buy and sell textbooks, electronics, fashion, and more within the Karatina University community. Safe, convenient, and built for students.
+                        Buy and sell foodstuffs, electronics, fashion, and more within the Karatina University community. Safe, convenient, and built for students.
                     </p>
                 </div>
 

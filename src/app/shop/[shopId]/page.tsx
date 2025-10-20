@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useParams, useSearchParams, useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import { getProductsByMerchant, getProductById, merchants, type Product } from "@/lib/data"
+import { getProductsByShop, getProductById, shops, type Product } from "@/lib/data"
 import { ProductDetailModal } from "@/components/product-detail-modal"
 import { ArrowLeft } from "lucide-react"
 
@@ -12,21 +12,21 @@ export default function ShopPage() {
     const params = useParams()
     const searchParams = useSearchParams()
     const router = useRouter()
-    const merchantId = params.merchantId as string
+    const shopId = params.shopId as string
 
     const productIdParam = searchParams.get("product")
 
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
     const [products, setProducts] = useState<Product[]>([])
 
-    const merchant = merchants[merchantId]
+    const merchant = shops[shopId]
 
 
 
     useEffect(() => {
 
-        console.log('merchantId ', merchantId)
-    }, [merchantId]);
+        console.log('shopId ', shopId)
+    }, [shopId]);
 
     useEffect(() => {
 
@@ -34,7 +34,7 @@ export default function ShopPage() {
     }, [merchant]);
 
     useEffect(() => {
-        const merchantProducts = getProductsByMerchant(merchantId)
+        const merchantProducts = getProductsByShop(shopId)
 
         if (merchantProducts ){
             console.log('merchantProducts exist: ', merchantProducts)
@@ -49,16 +49,16 @@ export default function ShopPage() {
                 setSelectedProduct(product)
             }
         }
-    }, [merchantId, productIdParam])
+    }, [shopId, productIdParam])
 
     const handleCloseModal = () => {
         setSelectedProduct(null)
-        router.push(`/shop/${merchantId}`, { scroll: false })
+        router.push(`/shop/${shopId}`, { scroll: false })
     }
 
     const handleProductClick = (product: Product) => {
         setSelectedProduct(product)
-        router.push(`/shop/${merchantId}?product=${product.id}`, { scroll: false })
+        router.push(`/shop/${shopId}?product=${product.id}`, { scroll: false })
     }
 
     if (!merchant) {

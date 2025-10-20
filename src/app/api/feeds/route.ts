@@ -57,19 +57,17 @@ export async function GET(req: NextRequest) {
         const hasPrevPage = page > 1;
 
         return NextResponse.json({
-            status: 200,
-            data: {
-                products,
-                pagination: {
-                    currentPage: page,
-                    totalPages,
-                    totalCount,
-                    limit,
-                    hasNextPage,
-                    hasPrevPage,
-                    nextPage: hasNextPage ? page + 1 : null,
-                    prevPage: hasPrevPage ? page - 1 : null
-                }
+            success: true,
+            products,
+            pagination: {
+                currentPage: page,
+                totalPages,
+                totalCount,
+                limit,
+                hasNextPage,
+                hasPrevPage,
+                nextPage: hasNextPage ? page + 1 : null,
+                prevPage: hasPrevPage ? page - 1 : null
             }
         });
 

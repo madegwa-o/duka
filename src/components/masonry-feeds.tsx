@@ -6,6 +6,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface PopulatedProduct {
     _id: string;
@@ -65,8 +66,10 @@ export default function MasonryFeeds() {
             }
 
             const data = await response.json();
-            setProducts(data.data.products);
-            setPagination(data.data.pagination);
+
+            console.log('data: ', data);
+            setProducts(data.products);
+            setPagination(data.pagination);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred');
         } finally {
@@ -123,26 +126,57 @@ export default function MasonryFeeds() {
             <div className="columns-1 gap-4 space-y-4 sm:columns-2 lg:columns-3 xl:columns-4">
                 {products.map((product) => {
                     const height = getProductHeight(product._id);
-                    const imageUrl = product.images?.[0]?.url || "/placeholder.svg";
-                    const imageAlt = product.images?.[0]?.alt || product.name;
+                    const hasMultipleImages = product.images && product.images.length > 1;
 
                     return (
-                        <Link
+                        <div
                             key={product._id}
-                            href={`/shop/${product.shop._id}?product=${product._id}`}
-                            className="group relative block break-inside-avoid overflow-hidden rounded-sm bg-card transition-all hover:shadow-lg"
+                            className="group relative break-inside-avoid overflow-hidden rounded-sm bg-card transition-all hover:shadow-lg"
                         >
-                            <div className="relative">
-                                <Image
-                                    src={imageUrl}
-                                    alt={imageAlt}
-                                    width={300}
-                                    height={height}
-                                    className="w-full transition-transform duration-300 group-hover:scale-105"
-                                />
-                                <div className="absolute inset-0 bg-foreground/0 transition-colors duration-300 group-hover:bg-foreground/10" />
-                            </div>
-                            <div className="p-4">
+                            {/* Image ScrollArea - only show if multiple images */}
+                            {hasMultipleImages ? (
+                                <ScrollArea className="w-full">
+                                    <div className="flex gap-0">
+                                        {product.images.map((image, idx) => (
+                                            <Link
+                                                key={image._id}
+                                                href={`/shop/${product.shop._id}?product=${product._id}`}
+                                                className="relative flex-shrink-0 w-full"
+                                            >
+                                                <Image
+                                                    src={`/api/r2/images/${encodeURIComponent(image.url)}`}
+                                                    alt={image.alt || `${product.name} - Image ${idx + 1}`}
+                                                    width={300}
+                                                    height={height}
+                                                    className="w-full transition-transform duration-300 group-hover:scale-105"
+                                                />
+                                                <div className="absolute inset-0 bg-foreground/0 transition-colors duration-300 group-hover:bg-foreground/10" />
+                                            </Link>
+                                        ))}
+                                    </div>
+                                    <ScrollBar orientation="horizontal" className="h-2" />
+                                </ScrollArea>
+                            ) : (
+                                <Link
+                                    href={`/shop/${product.shop._id}?product=${product._id}`}
+                                    className="relative block"
+                                >
+                                    <Image
+                                        src={`/api/r2/images/${encodeURIComponent(product.images?.[0]?.url || "/placeholder.svg")}`}
+                                        alt={product.images?.[0]?.alt || product.name}
+                                        width={300}
+                                        height={height}
+                                        className="w-full transition-transform duration-300 group-hover:scale-105"
+                                    />
+                                    <div className="absolute inset-0 bg-foreground/0 transition-colors duration-300 group-hover:bg-foreground/10" />
+                                </Link>
+                            )}
+
+                            {/* Product Info */}
+                            <Link
+                                href={`/shop/${product.shop._id}?product=${product._id}`}
+                                className="block p-4"
+                            >
                                 <h3 className="font-sans text-sm font-medium text-foreground">
                                     {product.name}
                                 </h3>
@@ -152,8 +186,13 @@ export default function MasonryFeeds() {
                                 <p className="mt-1 text-xs text-muted-foreground/70">
                                     {product.shop.name}
                                 </p>
-                            </div>
-                        </Link>
+                                {hasMultipleImages && (
+                                    <p className="mt-1 text-xs text-muted-foreground/50">
+                                        {product.images.length} images • Scroll to view →
+                                    </p>
+                                )}
+                            </Link>
+                        </div>
                     );
                 })}
             </div>
