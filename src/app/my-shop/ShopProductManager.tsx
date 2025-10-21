@@ -464,6 +464,8 @@ export default function ShopProductManager() {
                                     <Image
                                         src={previewUrl}
                                         alt="Preview"
+                                        width={400}
+                                        height={192}
                                         className="w-full h-48 object-cover rounded-lg"
                                     />
                                     <Button variant="destructive" size="icon" className="absolute top-2 right-2" onClick={handleClear}>
@@ -537,9 +539,12 @@ export default function ShopProductManager() {
                                         key={img._id}
                                         className="relative group border rounded-lg overflow-hidden hover:border-primary transition-colors"
                                     >
+
                                         <Image
                                             src={`/api/r2/images/${encodeURIComponent(img.url)}`}
                                             alt={img.label}
+                                            width={200}
+                                            height={128}
                                             className="w-full h-32 object-cover"
                                         />
                                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -597,9 +602,12 @@ export default function ShopProductManager() {
                             {shops.map((shop) => (
                                 <div key={shop._id} className="border rounded-lg p-4 hover:border-primary transition-colors">
                                     {shop.image && (
+
                                         <Image
                                             src={`/api/r2/images/${encodeURIComponent(shop.image.url)}`}
                                             alt={shop.name}
+                                            width={400}
+                                            height={128}
                                             className="w-full h-32 object-cover rounded-lg mb-3"
                                         />
                                     )}
@@ -638,6 +646,8 @@ export default function ShopProductManager() {
                                                     key={idx}
                                                     src={`/api/r2/images/${encodeURIComponent(img.url)}`}
                                                     alt={img.label || product.name}
+                                                    width={200}
+                                                    height={96}
                                                     className="w-full h-24 object-cover rounded"
                                                 />
                                             ))}
@@ -697,6 +707,8 @@ export default function ShopProductManager() {
                                     <Image
                                         src={`/api/r2/images/${encodeURIComponent(galleryImages.find(i => i._id === selectedShopImage)?.url || '')}`}
                                         alt="Selected"
+                                        width={400}
+                                        height={128}
                                         className="w-full h-32 object-cover rounded"
                                     />
                                     <Button
@@ -843,6 +855,8 @@ export default function ShopProductManager() {
                                                 <Image
                                                     src={`/api/r2/images/${encodeURIComponent(img.url)}`}
                                                     alt={img.label}
+                                                    width={100}
+                                                    height={80}
                                                     className="w-full h-20 object-cover rounded"
                                                 />
                                                 <Button
@@ -905,10 +919,12 @@ export default function ShopProductManager() {
                                             }`}
                                             onClick={() => handleSelectImage(img._id)}
                                         >
-                                            <img
+                                            <Image
                                                 src={`/api/r2/images/${encodeURIComponent(img.url)}`}
                                                 alt={img.label}
-                                                className="w-full h-24 object-cover"
+                                                width={100}
+                                                height={80}
+                                                className="w-full h-20 object-cover rounded"
                                             />
                                             {isSelected && (
                                                 <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
