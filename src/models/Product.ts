@@ -10,6 +10,7 @@ import { IImage } from "@/models/Image";
 export interface IProduct extends Document {
     _id: Types.ObjectId;
     name: string;
+    description: string;
     category: Types.ObjectId | ICategory;
     shop: Types.ObjectId | IShop;
     price: number;
@@ -26,6 +27,13 @@ const ProductSchema = new Schema<IProduct>(
             trim: true,
             minlength: 2,
             maxlength: 200,
+        },
+        description: {
+            type: String,
+            required: [true, "Product description is required"],
+            trim: true,
+            minlength: 2,
+            maxlength: 1000,
         },
         shop: {
             type: Schema.Types.ObjectId,

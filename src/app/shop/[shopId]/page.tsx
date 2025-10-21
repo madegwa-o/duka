@@ -73,6 +73,13 @@ export async function generateMetadata({
                 locale: 'en_US',
                 images: [
                     {
+                        url: shopImageUrl,
+                        width: 1200,
+                        height: 630,
+                        alt: `${shop.name} shop preview`,
+                        type: 'image/png',
+                    },
+                    {
                         url: ogImage,
                         width: 1200,
                         height: 630,

@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
         }
 
         const body = await req.json();
-        const { name, price, shop, categorySlug, images } = body;
+        const { name, description, price, shop, categorySlug, images } = body;
 
         // Validate required fields
         if (!name || name.trim().length < 2) {
@@ -87,6 +87,12 @@ export async function POST(req: NextRequest) {
         if (name.trim().length > 200) {
             return NextResponse.json(
                 { success: false, error: 'Product name must not exceed 200 characters' },
+                { status: 400 }
+            );
+        }
+        if (description.trim().length > 1000) {
+            return NextResponse.json(
+                { success: false, error: 'Product description must not exceed 1000 characters' },
                 { status: 400 }
             );
         }
@@ -189,6 +195,7 @@ export async function POST(req: NextRequest) {
         // Create the product
         const product = await Product.create({
             name: name.trim(),
+            description: description.trim(),
             price: parseFloat(price),
             shop,
             category: category._id,
