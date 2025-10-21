@@ -4,250 +4,150 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Shopify-inspired minimalist color system */
-  /* Base grays - more subtle and refined */
-  --gray-50: #fafafa;
-  --gray-100: #f6f6f7;
-  --gray-200: #ebebec;
-  --gray-300: #c9cccf;
-  --gray-400: #8c9196;
-  --gray-500: #6d7175;
-  --gray-600: #5c5f62;
-  --gray-700: #303030;
-  --gray-800: #202223;
-  --gray-900: #1a1a1a;
-  --gray-950: #0d0d0d;
-
-  /* Semantic colors - Shopify-like minimalism */
-  --border: #e1e3e5;
-  --border-hover: #c9cccf;
-  --text-primary: #202223;
-  --text-secondary: #6d7175;
-  --text-tertiary: #8c9196;
-  --surface: #ffffff;
-  --surface-hover: #f6f6f7;
-  --surface-secondary: #f6f6f7;
-
-  /* Header specific */
-  --header-bg: rgba(255, 255, 255, 0.95);
-  --header-border: #e1e3e5;
-
-  /* Interactive elements - subtle and refined */
-  --button-hover: #f6f6f7;
-  --button-border: #c9cccf;
-  --ring-color: #005bd3;
-
-  /* Status colors - Shopify green accent */
-  --success: #008060;
-  --accent-green: #008060;
-
-  --radius: 0.5rem;
-  --background: #ffffff;
-  --foreground: #202223;
-  --card: #ffffff;
-  --card-foreground: #202223;
-  --popover: #ffffff;
-  --popover-foreground: #202223;
-  --primary: #202223;
+  /* Modern vibrant ecommerce color palette - premium and engaging */
+  /* Primary brand colors - vibrant and energetic */
+  --primary: #1f2937;
   --primary-foreground: #ffffff;
-  --secondary: #f6f6f7;
-  --secondary-foreground: #202223;
-  --muted: #f6f6f7;
-  --muted-foreground: #6d7175;
-  --accent: #f6f6f7;
-  --accent-foreground: #202223;
-  --destructive: #d72c0d;
-  --destructive-foreground: #ffffff;
-  --input: #e1e3e5;
-  --ring: #005bd3;
-  --chart-1: #008060;
-  --chart-2: #5c6ac4;
-  --chart-3: #eec200;
-  --chart-4: #006fbb;
-  --chart-5: #47c1bf;
-  --sidebar: #f6f6f7;
-  --sidebar-foreground: #202223;
-  --sidebar-primary: #202223;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f6f6f7;
-  --sidebar-accent-foreground: #202223;
-  --sidebar-border: #e1e3e5;
-  --sidebar-ring: #005bd3;
-}
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Accent colors - vibrant and eye-catching */
+  --accent: #ff6b35;
+  --accent-foreground: #ffffff;
 
-  /* Custom colors for Tailwind */
-  --color-border: var(--border);
-  --color-border-hover: var(--border-hover);
-  --color-text-primary: var(--text-primary);
-  --color-text-secondary: var(--text-secondary);
-  --color-text-tertiary: var(--text-tertiary);
-  --color-surface: var(--surface);
-  --color-surface-hover: var(--surface-hover);
-  --color-surface-secondary: var(--surface-secondary);
-  --color-header-bg: var(--header-bg);
-  --color-header-border: var(--header-border);
-  --color-button-hover: var(--button-hover);
-  --color-button-border: var(--button-border);
-  --color-ring: var(--ring-color);
-  --color-success: var(--success);
-  --color-accent-green: var(--accent-green);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-input: var(--input);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 2px);
-  --radius-md: var(--radius);
-  --radius-lg: calc(var(--radius) + 2px);
-  --radius-xl: calc(var(--radius) + 4px);
-}
+  /* Secondary accent - complementary */
+  --secondary: #00d4ff;
+  --secondary-foreground: #1f2937;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Dark mode - Shopify-inspired */
-    --border: #2e2e2e;
-    --border-hover: #3e3e3e;
-    --text-primary: #e3e3e3;
-    --text-secondary: #b5b5b5;
-    --text-tertiary: #8c8c8c;
-    --surface: #1a1a1a;
-    --surface-hover: #2e2e2e;
-    --surface-secondary: #202020;
+  /* Success/positive - vibrant green */
+  --success: #10b981;
+  --success-foreground: #ffffff;
 
-    /* Header specific dark mode */
-    --header-bg: rgba(26, 26, 26, 0.95);
-    --header-border: #2e2e2e;
-
-    /* Interactive elements dark mode */
-    --button-hover: #2e2e2e;
-    --button-border: #3e3e3e;
-    --ring-color: #5c6ac4;
-  }
-}
-
-/* Dark mode class override */
-[data-theme="dark"] {
-  --background: #1a1a1a;
-  --foreground: #e3e3e3;
-  --border: #2e2e2e;
-  --border-hover: #3e3e3e;
-  --text-primary: #e3e3e3;
-  --text-secondary: #b5b5b5;
-  --text-tertiary: #8c8c8c;
-  --surface: #1a1a1a;
-  --surface-hover: #2e2e2e;
-  --surface-secondary: #202020;
-  --header-bg: rgba(26, 26, 26, 0.95);
-  --header-border: #2e2e2e;
-  --button-hover: #2e2e2e;
-  --button-border: #3e3e3e;
-  --ring-color: #5c6ac4;
-  --card: #202020;
-  --card-foreground: #e3e3e3;
-  --popover: #202020;
-  --popover-foreground: #e3e3e3;
-  --primary: #e3e3e3;
-  --primary-foreground: #1a1a1a;
-  --secondary: #2e2e2e;
-  --secondary-foreground: #e3e3e3;
-  --muted: #2e2e2e;
-  --muted-foreground: #b5b5b5;
-  --accent: #2e2e2e;
-  --accent-foreground: #e3e3e3;
-  --destructive: #ff6e6e;
-  --input: #2e2e2e;
-  --ring: #5c6ac4;
-}
-
-[data-theme="light"] {
+  /* Backgrounds - clean and modern */
   --background: #ffffff;
-  --foreground: #202223;
-  --border: #e1e3e5;
-  --border-hover: #c9cccf;
-  --text-primary: #202223;
-  --text-secondary: #6d7175;
-  --text-tertiary: #8c9196;
-  --surface: #ffffff;
-  --surface-hover: #f6f6f7;
-  --surface-secondary: #f6f6f7;
-  --header-bg: rgba(255, 255, 255, 0.95);
-  --header-border: #e1e3e5;
-  --button-hover: #f6f6f7;
-  --button-border: #c9cccf;
-  --ring-color: #005bd3;
-}
+  --foreground: #1f2937;
+  --card: #ffffff;
+  --card-foreground: #1f2937;
+  --popover: #ffffff;
+  --popover-foreground: #1f2937;
 
-body {
-  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "San Francisco", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  /* Neutral grays - refined and modern */
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
 
-/* Minimal transitions for theme switching */
-* {
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  /* Borders and inputs - subtle but visible */
+  --border: #e5e7eb;
+  --input: #f9fafb;
+  --ring: #ff6b35;
+
+  /* Destructive - vibrant red */
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  /* Chart colors - vibrant palette */
+  --chart-1: #ff6b35;
+  --chart-2: #00d4ff;
+  --chart-3: #10b981;
+  --chart-4: #f59e0b;
+  --chart-5: #8b5cf6;
+
+  /* Sidebar */
+  --sidebar: #f9fafb;
+  --sidebar-foreground: #1f2937;
+  --sidebar-primary: #1f2937;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #ff6b35;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #e5e7eb;
+  --sidebar-ring: #ff6b35;
+
+  --radius: 0.75rem;
 }
 
 .dark {
-  --background: #1a1a1a;
-  --foreground: #e3e3e3;
-  --card: #202020;
-  --card-foreground: #e3e3e3;
-  --popover: #202020;
-  --popover-foreground: #e3e3e3;
-  --primary: #e3e3e3;
-  --primary-foreground: #1a1a1a;
-  --secondary: #2e2e2e;
-  --secondary-foreground: #e3e3e3;
-  --muted: #2e2e2e;
-  --muted-foreground: #b5b5b5;
-  --accent: #2e2e2e;
-  --accent-foreground: #e3e3e3;
-  --destructive: #ff6e6e;
-  --border: #2e2e2e;
-  --input: #2e2e2e;
-  --ring: #5c6ac4;
-  --chart-1: #47c1bf;
-  --chart-2: #5c6ac4;
-  --chart-3: #eec200;
-  --chart-4: #006fbb;
-  --chart-5: #008060;
-  --sidebar: #202020;
-  --sidebar-foreground: #e3e3e3;
-  --sidebar-primary: #e3e3e3;
-  --sidebar-primary-foreground: #1a1a1a;
-  --sidebar-accent: #2e2e2e;
-  --sidebar-accent-foreground: #e3e3e3;
-  --sidebar-border: #2e2e2e;
-  --sidebar-ring: #5c6ac4;
+  /* Dark mode - vibrant and modern */
+  --primary: #f9fafb;
+  --primary-foreground: #1f2937;
+
+  --accent: #ff6b35;
+  --accent-foreground: #ffffff;
+
+  --secondary: #00d4ff;
+  --secondary-foreground: #1f2937;
+
+  --success: #10b981;
+  --success-foreground: #ffffff;
+
+  --background: #0f172a;
+  --foreground: #f9fafb;
+  --card: #1e293b;
+  --card-foreground: #f9fafb;
+  --popover: #1e293b;
+  --popover-foreground: #f9fafb;
+
+  --muted: #334155;
+  --muted-foreground: #cbd5e1;
+
+  --border: #334155;
+  --input: #1e293b;
+  --ring: #ff6b35;
+
+  --destructive: #f87171;
+  --destructive-foreground: #1f2937;
+
+  --chart-1: #ff6b35;
+  --chart-2: #00d4ff;
+  --chart-3: #10b981;
+  --chart-4: #f59e0b;
+  --chart-5: #a78bfa;
+
+  --sidebar: #1e293b;
+  --sidebar-foreground: #f9fafb;
+  --sidebar-primary: #f9fafb;
+  --sidebar-primary-foreground: #1f2937;
+  --sidebar-accent: #ff6b35;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #334155;
+  --sidebar-ring: #ff6b35;
+}
+
+@theme inline {
+  --font-sans: "Geist", "Geist Fallback";
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 }
 
 @layer base {
@@ -257,22 +157,28 @@ body {
   body {
     @apply bg-background text-foreground;
   }
-}
 
-/* Shopify-like button styles */
-button:not(:disabled) {
-  cursor: pointer;
-}
+  /* Enhanced button styles for modern ecommerce */
+  button:not(:disabled) {
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
 
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+  button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 
-/* Focus styles similar to Shopify */
-input:focus,
-textarea:focus,
-select:focus {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
+  /* Improved focus styles for accessibility */
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* Smooth transitions for theme switching */
+  * {
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
 }
