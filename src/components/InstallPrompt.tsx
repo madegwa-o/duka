@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { usePushNotifications } from "@/hooks/use-push-notifications";
 import { Button } from "@/components/ui/button";
 import { X, Bell } from "lucide-react";
+import Image from "next/image";
 
 // Define types for the PWA install event
 interface BeforeInstallPromptEvent extends Event {
@@ -114,7 +115,14 @@ export default function InstallPrompt() {
                 <div className="bg-card border-border rounded-lg shadow-lg border p-4">
                     <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center gap-3">
-                            <img src="/android-chrome-192x192.png" alt="Kia" className="w-12 h-12 rounded-lg" />
+                            <Image
+                                src="/android-chrome-192x192.png"
+                                alt="Kia"
+                                width={48}
+                                height={48}
+                                className="w-12 h-12 rounded-lg"
+                            />
+
                             <div>
                                 <h3 className="font-semibold text-card-foreground">Install Duka</h3>
                                 <p className="text-sm text-muted-foreground">Get quick access to your shop Insights</p>
