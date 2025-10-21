@@ -1,7 +1,18 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Upload, X, Loader2, AlertCircle, Image as ImageIcon, Save, Trash2, Store, Package, Plus } from "lucide-react"
+import {
+    Upload,
+    X,
+    Loader2,
+    AlertCircle as ImageIcon,
+    Save,
+    Trash2,
+    Store,
+    Package,
+    Plus,
+    AlertCircle
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -24,6 +35,7 @@ import {
 } from "@/components/ui/select"
 import {useRouter} from "next/navigation"
 import {useSession} from "next-auth/react"
+import Image from "next/image"
 
 
 interface GalleryImage {
@@ -449,7 +461,7 @@ export default function ShopProductManager() {
                         ) : (
                             <div className="space-y-4">
                                 <div className="relative">
-                                    <img
+                                    <Image
                                         src={previewUrl}
                                         alt="Preview"
                                         className="w-full h-48 object-cover rounded-lg"
@@ -525,7 +537,7 @@ export default function ShopProductManager() {
                                         key={img._id}
                                         className="relative group border rounded-lg overflow-hidden hover:border-primary transition-colors"
                                     >
-                                        <img
+                                        <Image
                                             src={`/api/r2/images/${encodeURIComponent(img.url)}`}
                                             alt={img.label}
                                             className="w-full h-32 object-cover"
@@ -585,7 +597,7 @@ export default function ShopProductManager() {
                             {shops.map((shop) => (
                                 <div key={shop._id} className="border rounded-lg p-4 hover:border-primary transition-colors">
                                     {shop.image && (
-                                        <img
+                                        <Image
                                             src={`/api/r2/images/${encodeURIComponent(shop.image.url)}`}
                                             alt={shop.name}
                                             className="w-full h-32 object-cover rounded-lg mb-3"
@@ -622,7 +634,7 @@ export default function ShopProductManager() {
                                     {product.images.length > 0 && (
                                         <div className="grid grid-cols-2 gap-2 mb-3">
                                             {product.images.map((img, idx) => (
-                                                <img
+                                                <Image
                                                     key={idx}
                                                     src={`/api/r2/images/${encodeURIComponent(img.url)}`}
                                                     alt={img.label || product.name}
@@ -682,7 +694,7 @@ export default function ShopProductManager() {
                             </Button>
                             {selectedShopImage && (
                                 <div className="mt-2 relative">
-                                    <img
+                                    <Image
                                         src={`/api/r2/images/${encodeURIComponent(galleryImages.find(i => i._id === selectedShopImage)?.url || '')}`}
                                         alt="Selected"
                                         className="w-full h-32 object-cover rounded"
@@ -828,7 +840,7 @@ export default function ShopProductManager() {
                                         const img = galleryImages.find(i => i._id === imgId)
                                         return img ? (
                                             <div key={imgId} className="relative">
-                                                <img
+                                                <Image
                                                     src={`/api/r2/images/${encodeURIComponent(img.url)}`}
                                                     alt={img.label}
                                                     className="w-full h-20 object-cover rounded"

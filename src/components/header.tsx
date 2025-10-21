@@ -43,7 +43,6 @@ export function Header() {
         { label: "Buy", href: "/" },
         { label: "My Saves", href: "/my-saves" },
         { label: "My Shop", href: "/my-shop" },
-        { href: "/share", label: "Share" },
         { href: "/account", label: "My Account" },
     ]
 
