@@ -101,7 +101,7 @@ export function SearchFiltersComponent({ categories, onFiltersChange, isLoading 
                     )}
                 </Button>
 
-                <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)} disabled={isLoading}>
+                <Select value={sortBy} onValueChange={(value) => setSortBy(value as "createdAt" | "price" | "name")} disabled={isLoading}>
                     <SelectTrigger className="w-40">
                         <SelectValue />
                     </SelectTrigger>
@@ -112,7 +112,7 @@ export function SearchFiltersComponent({ categories, onFiltersChange, isLoading 
                     </SelectContent>
                 </Select>
 
-                <Select value={sortOrder} onValueChange={(value: any) => setSortOrder(value)} disabled={isLoading}>
+                <Select value={sortOrder} onValueChange={(value) => setSortOrder(value as "asc" | "desc")} disabled={isLoading}>
                     <SelectTrigger className="w-32">
                         <SelectValue />
                     </SelectTrigger>
