@@ -1,41 +1,52 @@
-import { NextRequest, NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/db";
-import { Product } from "@/models";
-import { FilterQuery, Types } from "mongoose";
-import { IProduct } from "@/models/Product";
+import { type NextRequest, NextResponse } from "next/server"
+import { connectToDatabase } from "@/lib/db"
+import { Product } from "@/models"
+import { type FilterQuery, Types } from "mongoose"
+import type { IProduct } from "@/models/Product"
 
 export async function GET(req: NextRequest) {
     try {
-        await connectToDatabase();
+        await connectToDatabase()
 
         // Extract query parameters
-        const searchParams = req.nextUrl.searchParams;
-        const page = parseInt(searchParams.get('page') || '1', 10);
-        const limit = parseInt(searchParams.get('limit') || '10', 10);
-        const category = searchParams.get('category');
-        const shop = searchParams.get('shop');
-        const sortBy = searchParams.get('sortBy') || 'createdAt';
-        const sortOrder = searchParams.get('sortOrder') === 'asc' ? 1 : -1;
+        const searchParams = req.nextUrl.searchParams
+        const page = Number.parseInt(searchParams.get("page") || "1", 10)
+        const limit = Number.parseInt(searchParams.get("limit") || "10", 10)
+        const search = searchParams.get("search")
+        const categories = searchParams.getAll("categories")
+        const priceMin = searchParams.get("priceMin")
+        const priceMax = searchParams.get("priceMax")
+        const sortBy = searchParams.get("sortBy") || "createdAt"
+        const sortOrder = searchParams.get("sortOrder") === "asc" ? 1 : -1
 
         // Validate pagination parameters
         if (page < 1 || limit < 1 || limit > 100) {
-            return NextResponse.json(
-                { error: 'Invalid pagination parameters' },
-                { status: 400 }
-            );
+            return NextResponse.json({ error: "Invalid pagination parameters" }, { status: 400 })
         }
 
-        // Build filter object with proper typing
-        const filter: FilterQuery<IProduct> = {};
-        if (category) {
-            filter.category = new Types.ObjectId(category);
+        const filter: FilterQuery<IProduct> = {}
+
+        if (search && search.trim()) {
+            filter.$or = [{ name: { $regex: search, $options: "i" } }, { description: { $regex: search, $options: "i" } }]
         }
-        if (shop) {
-            filter.shop = new Types.ObjectId(shop);
+
+        if (categories && categories.length > 0) {
+            const categoryIds = categories.map((cat) => new Types.ObjectId(cat))
+            filter.category = { $in: categoryIds }
+        }
+
+        if (priceMin || priceMax) {
+            filter.price = {}
+            if (priceMin) {
+                filter.price.$gte = Number.parseFloat(priceMin)
+            }
+            if (priceMax) {
+                filter.price.$lte = Number.parseFloat(priceMax)
+            }
         }
 
         // Calculate skip value
-        const skip = (page - 1) * limit;
+        const skip = (page - 1) * limit
 
         // Execute queries in parallel
         const [products, totalCount] = await Promise.all([
@@ -43,18 +54,18 @@ export async function GET(req: NextRequest) {
                 .sort({ [sortBy]: sortOrder })
                 .skip(skip)
                 .limit(limit)
-                .populate('category', 'name')
-                .populate('shop', 'name')
-                .populate('images', 'url alt')
+                .populate("category", "name")
+                .populate("shop", "name")
+                .populate("images", "url alt")
                 .lean()
                 .exec(),
-            Product.countDocuments(filter)
-        ]);
+            Product.countDocuments(filter),
+        ])
 
         // Calculate pagination metadata
-        const totalPages = Math.ceil(totalCount / limit);
-        const hasNextPage = page < totalPages;
-        const hasPrevPage = page > 1;
+        const totalPages = Math.ceil(totalCount / limit)
+        const hasNextPage = page < totalPages
+        const hasPrevPage = page > 1
 
         return NextResponse.json({
             success: true,
@@ -67,15 +78,11 @@ export async function GET(req: NextRequest) {
                 hasNextPage,
                 hasPrevPage,
                 nextPage: hasNextPage ? page + 1 : null,
-                prevPage: hasPrevPage ? page - 1 : null
-            }
-        });
-
+                prevPage: hasPrevPage ? page - 1 : null,
+            },
+        })
     } catch (error) {
-        console.error('Error fetching products:', error);
-        return NextResponse.json(
-            { error: 'Internal Server Error' },
-            { status: 500 }
-        );
+        console.error("Error fetching products:", error)
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
     }
 }

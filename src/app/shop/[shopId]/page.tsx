@@ -147,13 +147,3 @@ export default async function ShopPage({
     return <ShopPageClient shopId={shopId} />
 }
 
-// Optional: Generate static params for popular shops (SSG)
-// export async function generateStaticParams() {
-//   // Fetch list of popular shop IDs
-//   const shops = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/shops/popular`)
-//     .then(res => res.json())
-//
-//   return shops.map((shop: any) => ({
-//     shopId: shop._id,
-//   }))
-// }

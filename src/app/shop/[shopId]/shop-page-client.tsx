@@ -1,7 +1,7 @@
 "use client"
 
 import {useState, useEffect} from "react"
-import {useParams, useSearchParams, useRouter} from "next/navigation"
+import { useSearchParams, useRouter} from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import {ProductDetailModal} from "@/components/product-detail-modal"

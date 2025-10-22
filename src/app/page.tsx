@@ -1,8 +1,30 @@
-'use client'
+"use client"
 
-import MasonryFeeds from "@/components/masonry-feeds";
+import { useState, useEffect } from "react"
+import { SearchFiltersComponent, type SearchFilters } from "@/components/search-filters"
+import MasonryFeeds from "@/components/masonry-feeds"
+import { useCategories } from "@/hooks/use-categories"
 
 export default function Home() {
+    const { categories, fetchCategories } = useCategories()
+    const [filters, setFilters] = useState<SearchFilters>({
+        search: "",
+        categories: [],
+        priceMin: null,
+        priceMax: null,
+        sortBy: "createdAt",
+        sortOrder: "desc",
+    })
+    const [isLoading, setIsLoading] = useState(false)
+
+    useEffect(() => {
+        fetchCategories()
+    }, [fetchCategories])
+
+    const handleFiltersChange = (newFilters: SearchFilters) => {
+        setFilters(newFilters)
+    }
+
     return (
         <div className="min-h-screen">
             <main className="container mx-auto px-4 py-12">
@@ -11,37 +33,28 @@ export default function Home() {
                         Your Campus Marketplace
                     </h2>
                     <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-                        Buy and sell foodstuffs, electronics, fashion, and more within the Karatina University community. Safe, convenient, and built for students.
+                        Buy and sell foodstuffs, electronics, fashion, and more within the Karatina University community. Safe,
+                        convenient, and built for students.
                     </p>
                 </div>
 
+                <SearchFiltersComponent categories={categories} onFiltersChange={handleFiltersChange} isLoading={isLoading} />
 
-                <MasonryFeeds />
+                <MasonryFeeds filters={filters} onLoadingChange={setIsLoading} />
             </main>
 
             <footer className="mt-24 border-t border-border bg-muted/30">
                 <div className="container mx-auto px-4 py-12">
                     <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-                        <p className="text-sm text-muted-foreground">
-                            © 2025 Duka. Made for Karatina University students.
-                        </p>
+                        <p className="text-sm text-muted-foreground">© 2025 Duka. Made for Karatina University students.</p>
                         <div className="flex gap-6">
-                            <a
-                                href="#"
-                                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                            >
+                            <a href="#" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
                                 WhatsApp
                             </a>
-                            <a
-                                href="#"
-                                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                            >
+                            <a href="#" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
                                 Safety Tips
                             </a>
-                            <a
-                                href="#"
-                                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                            >
+                            <a href="#" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
                                 Support
                             </a>
                         </div>
