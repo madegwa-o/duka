@@ -1,5 +1,5 @@
 // ============================================
-// app/api/products/route.ts
+// app/api/products/route.tsx
 // ============================================
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from "next-auth";

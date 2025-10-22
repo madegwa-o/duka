@@ -12,11 +12,22 @@ import EnhancedShareComponent from "@/components/share-component";
 export interface PopulatedProduct {
     _id: string;
     name: string;
+    description?: string;  // Add this line too
     price: number;
     category: {
         _id: string;
         name: string;
         slug: string;
+    };
+    shop: {  // Add this entire block
+        _id: string;
+        name: string;
+        owners?: Array<{
+            _id: string;
+            name: string;
+            phone?: string;
+            email?: string;
+        }>;
     };
     images: Array<{
         _id: string;
@@ -68,7 +79,7 @@ interface ShopPageClientProps {
     shopId?: string
 }
 
-export default function ShopPage({shopId}: ShopPageClientProps) {
+export default function ShopPageClient({shopId}: ShopPageClientProps) {
 
     const searchParams = useSearchParams()
     const router = useRouter()
@@ -234,7 +245,6 @@ export default function ShopPage({shopId}: ShopPageClientProps) {
                             shopId={shopId}
                             shopName={shopData.name}
                             shopImage={shopData.image?.url}
-                            productCount={shopData.productCount}
                             ownerName={primaryOwner?.name}
                             ownerAddress={primaryOwner?.address}
                             variant="modal" // or "buttons" for inline

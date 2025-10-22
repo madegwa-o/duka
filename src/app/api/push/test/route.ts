@@ -1,4 +1,4 @@
-// app/api/notifications/test/route.ts
+// app/api/notifications/test/route.tsx
 import { NextResponse } from "next/server"
 import { connectToDatabase } from "@/lib/db"
 import { sendPushNotification } from "@/lib/push-notifications"

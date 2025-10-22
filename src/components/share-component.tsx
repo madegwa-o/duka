@@ -1,255 +1,140 @@
-'use client'
+"use client"
 
-import { useState, useEffect } from 'react'
-import { Share2, Copy, Check, Facebook, Twitter, Linkedin, MessageCircle, X } from 'lucide-react'
+import { useState } from "react"
+import { Share2, Copy, Check } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
-type ShareVariant = 'buttons' | 'modal'
-
-interface EnhancedShareComponentProps {
-    shopId: string | undefined
-    shopName: string
+interface ShareComponentProps {
+    shopId?: string
+    productId?: string
+    shopName?: string
+    productName?: string
     shopImage?: string
-    productCount: number
+    productPrice?: number
     ownerName?: string
     ownerAddress?: string
-    size?: number
-    variant?: ShareVariant
+    variant?: "modal" | "buttons"
 }
 
-export default function EnhancedShareComponent({
-                                                   shopId,
-                                                   shopName,
-                                                   shopImage,
-                                                   productCount,
-                                                   ownerName,
-                                                   ownerAddress,
-                                                   size = 40,
-                                                   variant = 'buttons' // 'buttons' | 'modal'
-                                               }: EnhancedShareComponentProps) {
-    const [isOpen, setIsOpen] = useState(false)
+export default function ShareComponent({
+                                           shopId,
+                                           productId,
+                                           shopName,
+                                           productName,
+                                           shopImage,
+                                           productPrice,
+                                           ownerName,
+                                           ownerAddress,
+                                           variant = "buttons",
+                                       }: ShareComponentProps) {
     const [copied, setCopied] = useState(false)
-    const [canUseNativeShare, setCanUseNativeShare] = useState(false)
 
-    const shopUrl = typeof window !== 'undefined'
-        ? `${window.location.origin}/shop/${shopId}`
-        : `https://duka.aistartupclub.com/shop/${shopId}`
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : ""
+    const shareUrl = shopId ? `${baseUrl}/shop/${shopId}` : productId ? `${baseUrl}/product/${productId}` : baseUrl
 
-    const shareTitle = `Check out ${shopName} on Duka`
-    const shareDescription = `Explore ${productCount} amazing products from ${shopName}${ownerAddress ? ` located in ${ownerAddress}` : ''}. Shop quality items now!`
+    const title = productName || shopName || "Check this out on Duka"
+    const description = productName
+        ? `${productName} - sh${productPrice?.toFixed(2)} from ${shopName}`
+        : `${shopName}${ownerAddress ? ` in ${ownerAddress}` : ""}`
 
-    useEffect(() => {
-        setCanUseNativeShare(typeof navigator !== 'undefined' && !!navigator.share)
-    }, [])
-
-    const copyToClipboard = async () => {
+    const handleCopyLink = async () => {
         try {
-            await navigator.clipboard.writeText(shopUrl)
+            await navigator.clipboard.writeText(shareUrl)
             setCopied(true)
             setTimeout(() => setCopied(false), 2000)
         } catch (err) {
-            console.error('Failed to copy:', err)
+            console.error("Failed to copy:", err)
         }
     }
 
-    const handleNativeShare = async () => {
-        try {
-            await navigator.share({
-                title: shareTitle,
-                text: shareDescription,
-                url: shopUrl,
-            })
-        } catch (err: unknown) {
-            if (err instanceof Error && err.name !== 'AbortError') {
-                console.error('Share failed:', err)
-            }
-        }
-    }
-    const shareLinks = {
-        facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shopUrl)}`,
-        twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shopUrl)}&text=${encodeURIComponent(shareTitle)}`,
-        linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shopUrl)}`,
-        whatsapp: `https://wa.me/?text=${encodeURIComponent(`${shareTitle} - ${shopUrl}`)}`,
+    const shareToWhatsApp = () => {
+        const text = `${title}\n${description}\n\n${shareUrl}`
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`
+        window.open(whatsappUrl, "_blank")
     }
 
-    const handleShare = (platform: keyof typeof shareLinks) => {
-        const width = 600
-        const height = 600
-        const left = window.innerWidth / 2 - width / 2
-        const top = window.innerHeight / 2 - height / 2
-
-        window.open(
-            shareLinks[platform],
-            '_blank',
-            `width=${width},height=${height},left=${left},top=${top}`
-        )
+    const shareToTwitter = () => {
+        const text = `${title} - ${description}`
+        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}`
+        window.open(twitterUrl, "_blank")
     }
 
-    // Button variant - inline share buttons
-    if (variant === 'buttons') {
+    const shareToFacebook = () => {
+        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`
+        window.open(facebookUrl, "_blank")
+    }
+
+    if (variant === "modal") {
         return (
-            <div className="flex items-center gap-2">
-                <button
-                    onClick={() => handleShare('facebook')}
-                    className="flex items-center justify-center w-10 h-10 rounded-full bg-[#1877F2] hover:bg-[#166fe5] transition-colors"
-                    aria-label="Share on Facebook"
+            <div className="flex flex-col gap-3">
+                <Button
+                    onClick={shareToWhatsApp}
+                    variant="outline"
+                    size="sm"
+                    className="w-full justify-start gap-2 bg-transparent"
                 >
-                    <Facebook className="w-5 h-5 text-white" />
-                </button>
-
-                <button
-                    onClick={() => handleShare('twitter')}
-                    className="flex items-center justify-center w-10 h-10 rounded-full bg-[#1DA1F2] hover:bg-[#1a8cd8] transition-colors"
-                    aria-label="Share on Twitter"
+                    <Share2 className="h-4 w-4" />
+                    WhatsApp
+                </Button>
+                <Button
+                    onClick={shareToTwitter}
+                    variant="outline"
+                    size="sm"
+                    className="w-full justify-start gap-2 bg-transparent"
                 >
-                    <Twitter className="w-5 h-5 text-white" />
-                </button>
-
-                <button
-                    onClick={() => handleShare('whatsapp')}
-                    className="flex items-center justify-center w-10 h-10 rounded-full bg-[#25D366] hover:bg-[#22c55e] transition-colors"
-                    aria-label="Share on WhatsApp"
+                    <Share2 className="h-4 w-4" />
+                    Twitter
+                </Button>
+                <Button
+                    onClick={shareToFacebook}
+                    variant="outline"
+                    size="sm"
+                    className="w-full justify-start gap-2 bg-transparent"
                 >
-                    <MessageCircle className="w-5 h-5 text-white" />
-                </button>
-
-                <button
-                    onClick={() => handleShare('linkedin')}
-                    className="flex items-center justify-center w-10 h-10 rounded-full bg-[#0A66C2] hover:bg-[#095196] transition-colors"
-                    aria-label="Share on LinkedIn"
+                    <Share2 className="h-4 w-4" />
+                    Facebook
+                </Button>
+                <Button
+                    onClick={handleCopyLink}
+                    variant="outline"
+                    size="sm"
+                    className="w-full justify-start gap-2 bg-transparent"
                 >
-                    <Linkedin className="w-5 h-5 text-white" />
-                </button>
-
-                {canUseNativeShare && (
-                    <button
-                        onClick={handleNativeShare}
-                        className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-700 hover:bg-gray-600 transition-colors"
-                        aria-label="Share"
-                    >
-                        <Share2 className="w-5 h-5 text-white" />
-                    </button>
-                )}
+                    {copied ? (
+                        <>
+                            <Check className="h-4 w-4" />
+                            Copied!
+                        </>
+                    ) : (
+                        <>
+                            <Copy className="h-4 w-4" />
+                            Copy Link
+                        </>
+                    )}
+                </Button>
             </div>
         )
     }
 
-    // Modal variant - button that opens modal
     return (
-        <>
-            <button
-                onClick={() => setIsOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
-                <Share2 className="w-4 h-4" />
-                <span className="text-sm font-medium">Share Shop</span>
-            </button>
-
-            {/* Share Modal */}
-            {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center">
-                    {/* Backdrop */}
-                    <div
-                        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-                        onClick={() => setIsOpen(false)}
-                    />
-
-                    {/* Modal */}
-                    <div className="relative bg-background border border-border rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
-                        <button
-                            onClick={() => setIsOpen(false)}
-                            className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
-                            aria-label="Close"
-                        >
-                            <X className="w-5 h-5" />
-                        </button>
-
-                        <h2 className="text-xl font-semibold mb-2">Share {shopName}</h2>
-                        <p className="text-sm text-muted-foreground mb-6">
-                            Spread the word about this amazing shop
-                        </p>
-
-                        {/* Share URL */}
-                        <div className="mb-6">
-                            <label className="text-xs font-medium text-muted-foreground mb-2 block">
-                                Shop Link
-                            </label>
-                            <div className="flex gap-2">
-                                <input
-                                    type="text"
-                                    value={shopUrl}
-                                    readOnly
-                                    className="flex-1 px-3 py-2 text-sm bg-muted border border-border rounded-md"
-                                />
-                                <button
-                                    onClick={copyToClipboard}
-                                    className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors flex items-center gap-2"
-                                >
-                                    {copied ? (
-                                        <>
-                                            <Check className="w-4 h-4" />
-                                            <span className="text-sm">Copied!</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Copy className="w-4 h-4" />
-                                            <span className="text-sm">Copy</span>
-                                        </>
-                                    )}
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Share Buttons */}
-                        <div className="space-y-3">
-                            <p className="text-xs font-medium text-muted-foreground">
-                                Share on social media
-                            </p>
-
-                            <button
-                                onClick={() => handleShare('facebook')}
-                                className="w-full flex items-center gap-3 px-4 py-3 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-lg transition-colors"
-                            >
-                                <Facebook className="w-5 h-5" />
-                                <span className="font-medium">Share on Facebook</span>
-                            </button>
-
-                            <button
-                                onClick={() => handleShare('twitter')}
-                                className="w-full flex items-center gap-3 px-4 py-3 bg-[#1DA1F2] hover:bg-[#1a8cd8] text-white rounded-lg transition-colors"
-                            >
-                                <Twitter className="w-5 h-5" />
-                                <span className="font-medium">Share on Twitter</span>
-                            </button>
-
-                            <button
-                                onClick={() => handleShare('whatsapp')}
-                                className="w-full flex items-center gap-3 px-4 py-3 bg-[#25D366] hover:bg-[#22c55e] text-white rounded-lg transition-colors"
-                            >
-                                <MessageCircle className="w-5 h-5" />
-                                <span className="font-medium">Share on WhatsApp</span>
-                            </button>
-
-                            <button
-                                onClick={() => handleShare('linkedin')}
-                                className="w-full flex items-center gap-3 px-4 py-3 bg-[#0A66C2] hover:bg-[#095196] text-white rounded-lg transition-colors"
-                            >
-                                <Linkedin className="w-5 h-5" />
-                                <span className="font-medium">Share on LinkedIn</span>
-                            </button>
-
-                            {canUseNativeShare && (
-                                <button
-                                    onClick={handleNativeShare}
-                                    className="w-full flex items-center gap-3 px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
-                                >
-                                    <Share2 className="w-5 h-5" />
-                                    <span className="font-medium">More share options</span>
-                                </button>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            )}
-        </>
+        <div className="flex gap-2">
+            <Button onClick={shareToWhatsApp} size="sm" variant="outline" className="gap-2 bg-transparent">
+                <Share2 className="h-4 w-4" />
+                WhatsApp
+            </Button>
+            <Button onClick={handleCopyLink} size="sm" variant="outline" className="gap-2 bg-transparent">
+                {copied ? (
+                    <>
+                        <Check className="h-4 w-4" />
+                        Copied
+                    </>
+                ) : (
+                    <>
+                        <Copy className="h-4 w-4" />
+                        Share
+                    </>
+                )}
+            </Button>
+        </div>
     )
 }

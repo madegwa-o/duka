@@ -1,5 +1,5 @@
 // ============================================
-// app/api/feedshop/[shopId]/route.ts
+// app/api/feedshop/[shopId]/route.tsx
 // ============================================
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";

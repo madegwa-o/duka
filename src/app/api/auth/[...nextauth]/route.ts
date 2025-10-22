@@ -1,4 +1,4 @@
-// app/api/auth/[...nextauth]/route.ts
+// app/api/auth/[...nextauth]/route.tsx
 import Google from "next-auth/providers/google";
 import { addOrUpdateUser, getUserByEmail } from "@/lib/users";
 import NextAuth, { DefaultSession } from "next-auth";
