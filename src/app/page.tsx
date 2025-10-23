@@ -28,15 +28,24 @@ export default function Home() {
     return (
         <div className="min-h-screen">
             <main className="container mx-auto px-4 py-12">
-                <div className="mb-12 max-w-2xl">
-                    <h2 className="font-sans text-4xl font-medium leading-tight tracking-tight text-foreground text-balance">
-                        Your Campus Marketplace
-                    </h2>
-                    <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-                        Buy and sell foodstuffs, electronics, fashion, and more within the Karatina University community. Safe,
-                        convenient, and built for students.
-                    </p>
-                </div>
+
+                <a
+                    href="https://chat.whatsapp.com/F2QqO06EOyVDi7W36sQrTn?mode=wwt"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block mb-12 max-w-2xl transition-transform hover:scale-[1.02] hover:shadow-sm rounded-xl p-2"
+                >
+                    <div>
+                        <h2 className="font-sans text-4xl font-medium leading-tight tracking-tight text-foreground text-balance">
+                            Your Campus Marketplace
+                        </h2>
+                        <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+                            Buy and sell foodstuffs, electronics, fashion, and more within the Karatina University community. Safe,
+                            convenient, and built for students.
+                        </p>
+                    </div>
+                </a>
+
 
                 <SearchFiltersComponent categories={categories} onFiltersChange={handleFiltersChange} isLoading={isLoading} />
 
