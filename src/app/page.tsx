@@ -48,7 +48,7 @@ export default function Home() {
                     <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
                         <p className="text-sm text-muted-foreground">© 2025 Duka. Made for Karatina University students.</p>
                         <div className="flex gap-6">
-                            <a href="#" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                            <a href="https://chat.whatsapp.com/F2QqO06EOyVDi7W36sQrTn?mode=wwt" target='_blank' className="text-sm text-muted-foreground transition-colors hover:text-foreground">
                                 WhatsApp
                             </a>
                             <a href="#" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
