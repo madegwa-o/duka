@@ -173,14 +173,15 @@ export default function MasonryFeeds({ filters, onLoadingChange }: MasonryFeedsP
                                                 href={`/shop/${product.shop._id}?product=${product._id}`}
                                                 className="relative flex-shrink-0 w-full"
                                             >
-                                                <Image
-                                                    src={`/api/r2/images/${encodeURIComponent(image.url)}`}
-                                                    alt={image.alt || `${product.name} - Image ${idx + 1}`}
-                                                    width={300}
-                                                    height={height}
-                                                    loading="lazy"
-                                                    className="w-full transition-transform duration-300 group-hover:scale-105"
-                                                />
+                                                <div className="relative w-full" style={{ height: `${height}px` }}>
+                                                    <Image
+                                                        src={`/api/r2/images/${encodeURIComponent(image.url)}`}
+                                                        alt={image.alt || `${product.name} - Image ${idx + 1}`}
+                                                        fill
+                                                        loading="lazy"
+                                                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                                    />
+                                                </div>
                                                 <div className="absolute inset-0 bg-foreground/0 transition-colors duration-300 group-hover:bg-foreground/10" />
                                             </Link>
                                         ))}

@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import useSWR from 'swr';
 import { User, Phone, MapPin, Trash2, ShoppingBag, Store } from 'lucide-react';
+import {useSession} from "next-auth/react";
+import {useRouter} from "next/navigation";
 
 interface OwnerContact {
     name?: string;
@@ -44,12 +46,32 @@ const fetcher = (url: string) => fetch(url).then(res => {
 });
 
 export default function MyCart() {
+    const {data: session} = useSession();
+    const router = useRouter()
     const [removingId, setRemovingId] = useState<string | null>(null);
 
     const { data, error, isLoading, mutate } = useSWR<CartResponse>('/api/my-cart', fetcher, {
         revalidateOnFocus: false,
         revalidateOnReconnect: true,
     });
+
+    useEffect(() => {
+        if (status === 'unauthenticated') {
+            router.push(`/signin?callbackUrl=/my-cart`)
+        }
+    }, [status, router])
+
+    if (status === 'loading' || !session) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-background">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-accent mx-auto mb-4"></div>
+                    <p className="text-lg text-muted-foreground">Loading...</p>
+                </div>
+            </div>
+        )
+    }
+
 
     const cart = data?.cart || [];
     const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
