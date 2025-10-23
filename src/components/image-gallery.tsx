@@ -43,7 +43,7 @@ export const ImageGallery = memo(function ImageGallery({
                                 priority
                             />
                         </div>
-                        <p className="text-muted-foreground mb-4 text-sm">No shops yet</p>
+                        <p className="text-muted-foreground mb-4 text-sm">No Images yet</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 gap-3 max-h-[500px] overflow-y-auto">

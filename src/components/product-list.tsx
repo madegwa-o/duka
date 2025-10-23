@@ -39,7 +39,7 @@ export const ProductList = memo(function ProductList({ products, onCreateClick }
                                 priority
                             />
                         </div>
-                        <p className="text-muted-foreground mb-4 text-sm">No shops yet</p>
+                        <p className="text-muted-foreground mb-4 text-sm">No Products yet</p>
                         <Button onClick={onCreateClick} className="shadow-sm hover:shadow-md transition-all">
                             Create Your First Product
                         </Button>
