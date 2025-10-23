@@ -1,6 +1,6 @@
 "use client";
 
-import { ShoppingBag, Heart, Store } from "lucide-react";
+import {ShoppingBag, Heart, Store, ShoppingCartIcon} from "lucide-react";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -18,9 +18,9 @@ export default function MobileBottomNav() {
             label: "Buy",
         },
         {
-            href: "/my-saves",
-            icon: Heart, // Universally recognized for saved/favorite items
-            label: "My Saves",
+            href: "/my-cart",
+            icon: ShoppingCartIcon, // Universally recognized for saved/favorite items
+            label: "My Cart",
         },
         {
             href: "/my-shop",

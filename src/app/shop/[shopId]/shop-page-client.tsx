@@ -8,6 +8,10 @@ import {ProductDetailModal} from "@/components/product-detail-modal"
 import {ArrowLeft, Phone, MapPin} from "lucide-react"
 import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
 import EnhancedShareComponent from "@/components/share-component";
+import useSWR from "swr"
+import { useMemo } from "react";
+
+
 
 export interface PopulatedProduct {
     _id: string;
@@ -79,54 +83,48 @@ interface ShopPageClientProps {
     shopId?: string
 }
 
+const fetcher = (url: string) => fetch(url).then((res) => {
+    if (!res.ok) throw new Error('Failed to fetch shop data')
+    return res.json()
+})
+
+
 export default function ShopPageClient({shopId}: ShopPageClientProps) {
 
     const searchParams = useSearchParams()
     const router = useRouter()
-
     const productIdParam = searchParams.get("product")
 
     const [selectedProduct, setSelectedProduct] = useState<PopulatedProduct | null>(null)
-    const [shopData, setShopData] = useState<ShopData | null>(null)
-    const [owners, setOwners] = useState<Owner[]>([])
-    const [products, setProducts] = useState<PopulatedProduct[]>([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
 
-    useEffect(() => {
-        const fetchShopData = async () => {
-            try {
-                setLoading(true)
-                setError(null)
 
-                const response = await fetch(`/api/feedshop/${shopId}`)
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch shop data')
-                }
-
-                const data: ApiResponse = await response.json()
-
-                setShopData(data.shop)
-                setOwners(data.owners)
-                setProducts(data.products)
-
-                // If there's a product ID in the URL, find and set it
-                if (productIdParam) {
-                    const product = data.products.find(p => p._id === productIdParam)
-                    if (product) {
-                        setSelectedProduct(product)
-                    }
-                }
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'An error occurred')
-            } finally {
-                setLoading(false)
-            }
+    // Use SWR to fetch shop data
+    const { data, error, isLoading } = useSWR<ApiResponse>(
+        shopId ? `/api/feedshop/${shopId}` : null,
+        fetcher,
+        {
+            revalidateOnFocus: false,
+            revalidateOnReconnect: false,
         }
+    )
 
-        fetchShopData()
-    }, [shopId, productIdParam])
+    const shopData = data?.shop
+    const owners = data?.owners || []
+    const primaryOwner = owners[0]
+    const products = useMemo(() => data?.products || [], [data?.products]);
+
+
+    // Set selected product when productIdParam changes
+    useEffect(() => {
+        if (productIdParam && products.length > 0) {
+            const product = products.find(p => p._id === productIdParam)
+            if (product) {
+                setSelectedProduct(product)
+            }
+        } else {
+            setSelectedProduct(null)
+        }
+    }, [productIdParam, products])
 
     const handleCloseModal = () => {
         setSelectedProduct(null)
@@ -138,7 +136,11 @@ export default function ShopPageClient({shopId}: ShopPageClientProps) {
         router.push(`/shop/${shopId}?product=${product._id}`, {scroll: false})
     }
 
-    if (loading) {
+    useEffect(() => {
+        console.log('owners: ', owners)
+    }, []);
+
+    if (isLoading) {
         return (
             <div className="flex min-h-screen items-center justify-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"/>
@@ -164,7 +166,6 @@ export default function ShopPageClient({shopId}: ShopPageClientProps) {
         )
     }
 
-    const primaryOwner = owners[0]
 
     return (
         <div className="min-h-screen">
@@ -248,6 +249,7 @@ export default function ShopPageClient({shopId}: ShopPageClientProps) {
                             ownerName={primaryOwner?.name}
                             ownerAddress={primaryOwner?.address}
                             variant="modal" // or "buttons" for inline
+                            nature='shop'
                         />
 
                     </div>
@@ -328,6 +330,7 @@ export default function ShopPageClient({shopId}: ShopPageClientProps) {
             {selectedProduct && (
                 <ProductDetailModal
                     product={selectedProduct}
+
                     onClose={handleCloseModal}
                 />
             )}

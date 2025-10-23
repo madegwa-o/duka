@@ -34,11 +34,11 @@ export async function generateMetadata({
             owner?.address ? ` in ${owner.address}` : ""
         }. ${owner?.name ? `Owned by ${owner.name}.` : ""} Shop now!`
 
-        const ogImage = `${process.env.NEXT_PUBLIC_APP_URL}/api/og/shop/${shopId}`
 
-        const shopImageUrl = shop.image
-            ? `${process.env.NEXT_PUBLIC_APP_URL}/api/r2/images/${shop.image.url}`
-            : owner?.image || `${process.env.NEXT_PUBLIC_APP_URL}/og-default.jpg`
+        const ogImage = `${process.env.NEXT_PUBLIC_APP_URL}/api/r2/images/${encodeURIComponent(shop.image.url)}`
+
+        console.log('shop:', shop)
+        console.log('shop image:', ogImage)
 
         return {
             title,
@@ -126,5 +126,7 @@ export default async function ShopPage({
     params: Promise<{ shopId: string }>
 }) {
     const { shopId } = await params
+
+
     return <ShopPageClient shopId={shopId} />
 }

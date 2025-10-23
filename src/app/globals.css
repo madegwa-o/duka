@@ -4,109 +4,141 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Modern vibrant ecommerce color palette - premium and engaging */
-  /* Primary brand colors - vibrant and energetic */
-  --primary: #1f2937;
+  /* Modern premium ecommerce palette - refined and trustworthy */
+
+  /* Primary brand - professional navy/slate for trust and sophistication */
+  --primary: #0f172a;
   --primary-foreground: #ffffff;
 
-  /* Accent colors - vibrant and eye-catching */
-  --accent: #ff6b35;
+  /* Accent - energetic coral/orange for CTAs and highlights */
+  --accent: #f97316;
   --accent-foreground: #ffffff;
 
-  /* Secondary accent - complementary */
-  --secondary: #00d4ff;
-  --secondary-foreground: #1f2937;
+  /* Secondary - vibrant teal for variety and complementary actions */
+  --secondary: #06b6d4;
+  --secondary-foreground: #ffffff;
 
-  /* Success/positive - vibrant green */
+  /* Success - fresh green for positive actions */
   --success: #10b981;
   --success-foreground: #ffffff;
 
-  /* Backgrounds - clean and modern */
+  /* Warning - amber for caution */
+  --warning: #f59e0b;
+  --warning-foreground: #ffffff;
+
+  /* Backgrounds - clean and spacious */
   --background: #ffffff;
-  --foreground: #1f2937;
+  --foreground: #0f172a;
   --card: #ffffff;
-  --card-foreground: #1f2937;
+  --card-foreground: #0f172a;
   --popover: #ffffff;
-  --popover-foreground: #1f2937;
+  --popover-foreground: #0f172a;
 
-  /* Neutral grays - refined and modern */
-  --muted: #f3f4f6;
-  --muted-foreground: #6b7280;
+  /* Neutral grays - refined scale */
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
 
-  /* Borders and inputs - subtle but visible */
-  --border: #e5e7eb;
-  --input: #f9fafb;
-  --ring: #ff6b35;
+  /* Borders and inputs - subtle definition */
+  --border: #e2e8f0;
+  --input: #f8fafc;
+  --ring: #f97316;
 
-  /* Destructive - vibrant red */
+  /* Destructive - clear red for deletion/errors */
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
 
-  /* Chart colors - vibrant palette */
-  --chart-1: #ff6b35;
-  --chart-2: #00d4ff;
+  /* Chart colors - vibrant and distinguishable */
+  --chart-1: #f97316;
+  --chart-2: #06b6d4;
   --chart-3: #10b981;
   --chart-4: #f59e0b;
   --chart-5: #8b5cf6;
 
-  /* Sidebar */
-  --sidebar: #f9fafb;
-  --sidebar-foreground: #1f2937;
-  --sidebar-primary: #1f2937;
+  /* Sidebar - slightly elevated surface */
+  --sidebar: #f8fafc;
+  --sidebar-foreground: #0f172a;
+  --sidebar-primary: #0f172a;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #ff6b35;
+  --sidebar-accent: #f97316;
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #e5e7eb;
-  --sidebar-ring: #ff6b35;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: #f97316;
 
-  --radius: 0.75rem;
+  /* Surface variants for depth */
+  --surface: #ffffff;
+  --surface-secondary: #f8fafc;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+
+  --radius: 0.5rem;
 }
 
 .dark {
-  /* Dark mode - vibrant and modern */
-  --primary: #f9fafb;
-  --primary-foreground: #1f2937;
+  /* Dark mode - sophisticated and easy on eyes */
 
-  --accent: #ff6b35;
+  /* Primary - light text on dark */
+  --primary: #f8fafc;
+  --primary-foreground: #0f172a;
+
+  /* Accent - slightly muted for dark mode comfort */
+  --accent: #fb923c;
   --accent-foreground: #ffffff;
 
-  --secondary: #00d4ff;
-  --secondary-foreground: #1f2937;
+  /* Secondary - adjusted for dark mode */
+  --secondary: #22d3ee;
+  --secondary-foreground: #0f172a;
 
-  --success: #10b981;
-  --success-foreground: #ffffff;
+  /* Success - maintained vibrancy */
+  --success: #34d399;
+  --success-foreground: #0f172a;
 
+  /* Warning */
+  --warning: #fbbf24;
+  --warning-foreground: #0f172a;
+
+  /* Backgrounds - deep slate for reduced eye strain */
   --background: #0f172a;
-  --foreground: #f9fafb;
+  --foreground: #f8fafc;
   --card: #1e293b;
-  --card-foreground: #f9fafb;
+  --card-foreground: #f8fafc;
   --popover: #1e293b;
-  --popover-foreground: #f9fafb;
+  --popover-foreground: #f8fafc;
 
+  /* Neutral grays - warm slate scale */
   --muted: #334155;
   --muted-foreground: #cbd5e1;
 
+  /* Borders - visible but not harsh */
   --border: #334155;
   --input: #1e293b;
-  --ring: #ff6b35;
+  --ring: #fb923c;
 
+  /* Destructive - softer in dark mode */
   --destructive: #f87171;
-  --destructive-foreground: #1f2937;
+  --destructive-foreground: #ffffff;
 
-  --chart-1: #ff6b35;
-  --chart-2: #00d4ff;
-  --chart-3: #10b981;
-  --chart-4: #f59e0b;
+  /* Chart colors - optimized for dark backgrounds */
+  --chart-1: #fb923c;
+  --chart-2: #22d3ee;
+  --chart-3: #34d399;
+  --chart-4: #fbbf24;
   --chart-5: #a78bfa;
 
+  /* Sidebar */
   --sidebar: #1e293b;
-  --sidebar-foreground: #f9fafb;
-  --sidebar-primary: #f9fafb;
-  --sidebar-primary-foreground: #1f2937;
-  --sidebar-accent: #ff6b35;
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: #f8fafc;
+  --sidebar-primary-foreground: #0f172a;
+  --sidebar-accent: #fb923c;
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #334155;
-  --sidebar-ring: #ff6b35;
+  --sidebar-ring: #fb923c;
+
+  /* Surface variants */
+  --surface: #1e293b;
+  --surface-secondary: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
 }
 
 @theme inline {
@@ -136,6 +168,10 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -155,17 +191,21 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
   }
 
   /* Enhanced button styles for modern ecommerce */
   button:not(:disabled) {
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  button:not(:disabled):active {
+    transform: scale(0.98);
   }
 
   button:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
   }
 
@@ -177,8 +217,55 @@
     outline-offset: 2px;
   }
 
-  /* Smooth transitions for theme switching */
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Selection color */
+  ::selection {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  /* Smooth transitions for theme switching - but not transform */
   * {
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    transition: background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease;
+  }
+
+  /* Remove transition from transform for better performance */
+  button, a {
+    transition: background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* Custom utility classes */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .gradient-accent {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+  }
+
+  .gradient-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, #1e293b 100%);
+  }
+
+  .card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   }
 }

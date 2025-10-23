@@ -3,7 +3,7 @@
 import type React from "react"
 
 import Image from "next/image"
-import { X, Phone, MessageCircle, Share2, ChevronLeft, ChevronRight } from "lucide-react"
+import { X, Phone, MessageCircle, Share2, ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react"
 import { useState, useEffect } from "react"
 import useSWR from "swr"
 import ShareComponent from "@/components/share-component"
@@ -11,14 +11,14 @@ import ShareComponent from "@/components/share-component"
 export interface PopulatedProduct {
     _id: string;
     name: string;
-    description?: string;  // Add this line too
+    description?: string;
     price: number;
     category: {
         _id: string;
         name: string;
         slug: string;
     };
-    shop: {  // Add this entire block
+    shop: {
         _id: string;
         name: string;
         owners?: Array<{
@@ -48,6 +48,8 @@ export function ProductDetailModal({ product: initialProduct, onClose }: Product
     const [touchStart, setTouchStart] = useState(0)
     const [touchEnd, setTouchEnd] = useState(0)
     const [showShare, setShowShare] = useState(false)
+    const [isAddingToCart, setIsAddingToCart] = useState(false)
+    const [cartMessage, setCartMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
 
     const { data, isLoading } = useSWR(`/api/products/${initialProduct._id}`, fetcher, {
         fallbackData: { product: initialProduct },
@@ -57,6 +59,10 @@ export function ProductDetailModal({ product: initialProduct, onClose }: Product
     const product = data?.product || initialProduct
     const hasMultipleImages = product.images && product.images.length > 1
     const seller = product.shop?.owners?.[0]
+
+
+    console.log('seller: ',seller)
+    console.log('initial product: ',initialProduct)
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -72,6 +78,14 @@ export function ProductDetailModal({ product: initialProduct, onClose }: Product
         window.addEventListener("keydown", handleKeyDown)
         return () => window.removeEventListener("keydown", handleKeyDown)
     }, [currentImageIndex, product.images.length])
+
+    // Clear cart message after 3 seconds
+    useEffect(() => {
+        if (cartMessage) {
+            const timer = setTimeout(() => setCartMessage(null), 3000)
+            return () => clearTimeout(timer)
+        }
+    }, [cartMessage])
 
     const handlePrevImage = () => {
         setCurrentImageIndex((prev) => (prev === 0 ? product.images.length - 1 : prev - 1))
@@ -118,6 +132,38 @@ export function ProductDetailModal({ product: initialProduct, onClose }: Product
         }
     }
 
+    const handleAddToCart = async () => {
+        setIsAddingToCart(true)
+        setCartMessage(null)
+
+        try {
+            const response = await fetch('/api/my-cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    productId: product._id
+                })
+            })
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to add to cart')
+            }
+
+            setCartMessage({ type: 'success', text: data.message || 'Added to cart successfully!' })
+        } catch (error) {
+            setCartMessage({
+                type: 'error',
+                text: error instanceof Error ? error.message : 'Failed to add to cart'
+            })
+        } finally {
+            setIsAddingToCart(false)
+        }
+    }
+
     return (
         <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/80 p-4 backdrop-blur-sm"
@@ -134,6 +180,17 @@ export function ProductDetailModal({ product: initialProduct, onClose }: Product
                 >
                     <X className="h-5 w-5" />
                 </button>
+
+                {/* Cart Message Toast */}
+                {cartMessage && (
+                    <div className={`absolute top-4 left-1/2 -translate-x-1/2 z-20 px-4 py-2 rounded-sm shadow-lg ${
+                        cartMessage.type === 'success'
+                            ? 'bg-success text-success-foreground'
+                            : 'bg-destructive text-destructive-foreground'
+                    }`}>
+                        {cartMessage.text}
+                    </div>
+                )}
 
                 <div className="grid gap-6 md:grid-cols-2">
                     {/* Image Section */}
@@ -222,6 +279,26 @@ export function ProductDetailModal({ product: initialProduct, onClose }: Product
                                 <span className="text-sm text-muted-foreground">KES</span>
                             </div>
 
+                            {/* Add to Cart Button */}
+                            <button
+                                onClick={handleAddToCart}
+                                disabled={isAddingToCart}
+                                className="w-full flex items-center justify-center gap-2 rounded-sm bg-primary px-6 py-3 font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isAddingToCart ? (
+                                    <>
+                                        <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-primary-foreground" />
+                                        Adding...
+                                    </>
+                                ) : (
+                                    <>
+                                        <ShoppingCart className="h-4 w-4" />
+                                        Add to Cart
+                                    </>
+                                )}
+                            </button>
+
+                            {/* Contact Buttons */}
                             <div className="space-y-2">
                                 {seller?.phone && (
                                     <>
@@ -260,6 +337,7 @@ export function ProductDetailModal({ product: initialProduct, onClose }: Product
                                             productPrice={product.price}
                                             shopName={product.shop.name}
                                             variant="modal"
+                                            nature='product'
                                         />
                                     </div>
                                 )}

@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation"
 import {usePushNotifications} from "@/hooks/use-push-notifications";
 
 export default function AccountPage() {
-    const { data: session, status } = useSession()
+    const { data: session, status, update } = useSession()
     const { isSupported, isSubscribed, subscribeToPush, unsubscribeFromPush } = usePushNotifications();
     const router = useRouter()
     const [emailNotifications, setEmailNotifications] = useState(true)
@@ -27,12 +27,41 @@ export default function AccountPage() {
     const [isSettingPassword, setIsSettingPassword] = useState(false)
     const [isProcessingPush, setIsProcessingPush] = useState(false);
 
+    // Phone number state
+    const [phoneNumber, setPhoneNumber] = useState("")
+    const [isLoadingPhone, setIsLoadingPhone] = useState(true)
+    const [isUpdatingPhone, setIsUpdatingPhone] = useState(false)
+    const [phoneError, setPhoneError] = useState<string | null>(null)
+    const [phoneSuccess, setPhoneSuccess] = useState<string | null>(null)
+
 
     useEffect(() => {
         if (status === "unauthenticated") {
             router.push("/signin?callbackUrl=/account")
         }
     }, [status, router])
+
+    // Fetch phone number on mount
+    useEffect(() => {
+        const fetchPhoneNumber = async () => {
+            if (status === "authenticated") {
+                setIsLoadingPhone(true)
+                try {
+                    const response = await fetch("/api/user/update-phone")
+                    if (response.ok) {
+                        const data = await response.json()
+                        setPhoneNumber(data.phone || "")
+                    }
+                } catch (error) {
+                    console.error("Error fetching phone number:", error)
+                } finally {
+                    setIsLoadingPhone(false)
+                }
+            }
+        }
+
+        fetchPhoneNumber()
+    }, [status])
 
     const handleSetPassword = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -75,6 +104,37 @@ export default function AccountPage() {
         }
     }
 
+    const handleUpdatePhone = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setPhoneError(null)
+        setPhoneSuccess(null)
+        setIsUpdatingPhone(true)
+
+        try {
+            const response = await fetch("/api/user/update-phone", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ phone: phoneNumber }),
+            })
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                setPhoneError(data.error || "Failed to update phone number")
+            } else {
+                setPhoneSuccess("Phone number updated successfully!")
+                // Update session to reflect new phone number
+                setPhoneNumber(data.phone || "")
+                await update()
+            }
+        } catch (error) {
+            console.error("Phone update error:", error)
+            setPhoneError("An error occurred. Please try again.")
+        } finally {
+            setIsUpdatingPhone(false)
+        }
+    }
+
 
     if (status === "loading") {
         return (
@@ -89,7 +149,7 @@ export default function AccountPage() {
     }
 
 
-     const handleToggle = async (checked: boolean) => {
+    const handleToggle = async (checked: boolean) => {
         setIsProcessingPush(true);
         try {
             if (checked) {
@@ -116,7 +176,6 @@ export default function AccountPage() {
                 <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
                     <TabsTrigger value="profile">Profile</TabsTrigger>
                     <TabsTrigger value="settings">Settings</TabsTrigger>
-                    <TabsTrigger value="subscription">Subscription</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="profile" className="space-y-6">
@@ -137,11 +196,48 @@ export default function AccountPage() {
                                 <Label htmlFor="email">Email Address</Label>
                                 <Input id="email" type="email" defaultValue={session.user?.email || ""} disabled />
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="phone">Phone Number</Label>
-                                <Input id="phone" type="tel" placeholder="+1 (555) 000-0000" />
-                            </div>
-                            <Button>Save Changes</Button>
+
+                            {phoneError && (
+                                <Alert variant="destructive">
+                                    <AlertDescription>{phoneError}</AlertDescription>
+                                </Alert>
+                            )}
+                            {phoneSuccess && (
+                                <Alert className="border-primary bg-primary/10">
+                                    <AlertDescription className="text-primary">{phoneSuccess}</AlertDescription>
+                                </Alert>
+                            )}
+
+                            <form onSubmit={handleUpdatePhone} className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="phone">Phone Number</Label>
+                                    <div className="relative">
+                                        <Input
+                                            id="phone"
+                                            type="tel"
+                                            placeholder="070-000-0000"
+                                            value={phoneNumber}
+                                            onChange={(e) => setPhoneNumber(e.target.value)}
+                                            disabled={isUpdatingPhone || isLoadingPhone}
+                                        />
+                                        {isLoadingPhone && (
+                                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <Button type="submit" disabled={isUpdatingPhone || isLoadingPhone}>
+                                    {isUpdatingPhone ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            Updating...
+                                        </>
+                                    ) : (
+                                        "Save Changes"
+                                    )}
+                                </Button>
+                            </form>
                         </CardContent>
                     </Card>
 

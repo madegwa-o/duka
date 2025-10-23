@@ -6,6 +6,7 @@ import { Schema, model, models, Types, Document } from "mongoose";
 import bcrypt from "bcryptjs";
 import { IShop } from "./Shop";
 import { IImage } from "./Image";
+import {IProduct} from "@/models/Product";
 
 export enum Role {
 	ADMIN = "ADMIN",
@@ -26,6 +27,7 @@ export interface IUser extends Document {
 	image?: string;
 	phone?: string;
 	address?: string;
+	cart: (Types.ObjectId | IProduct)[];
 	shops: (Types.ObjectId | IShop)[];
 	gallery: (Types.ObjectId | IImage)[]; // ✅ Added gallery for user's images
 	roles: Role[];
@@ -72,6 +74,10 @@ const UserSchema = new Schema<IUser>(
 			default: [Role.USER],
 			index: true,
 		},
+		cart: [{
+			type: Schema.Types.ObjectId,
+			ref: "Product"
+		}],
 		shops: [{
 			type: Schema.Types.ObjectId,
 			ref: "Shop"
