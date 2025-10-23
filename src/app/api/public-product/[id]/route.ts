@@ -1,44 +1,9 @@
-
-// ============================================
-// app/api/products/[id]/route.tsx
-// ============================================
+// app/api/public-product/[id]/route.tsx
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from "next-auth";
 import { connectToDatabase } from '@/lib/db';
-import { Product, User, Image } from '@/models';
+import { Product } from '@/models';
 
-interface UserDoc {
-    _id: string;
-    email: string;
-}
-
-type ProductUpdateFields = Partial<Pick<PopulatedProduct, "name" | "price" | "category" | "images">>;
-
-
-interface PopulatedProduct {
-    _id: string;
-    name: string;
-    price: number;
-    category: {
-        _id: string;
-        name: string;
-        slug: string;
-    };
-    shop: {
-        _id: string;
-        name: string;
-        image: string;
-        owners: string[];
-    };
-    images: {
-        _id: string;
-        label: string;
-        url: string;
-    }[];
-}
-
-
-// GET - Get a single product by ID
+// GET - Get a single product by ID with full details
 export async function GET(
     req: NextRequest,
     context: { params: Promise<{ id: string }> }
@@ -46,18 +11,28 @@ export async function GET(
     const { id } = await context.params;
 
     try {
-
         const productId = id;
-
         await connectToDatabase();
 
-
-        // Find the product
+        // Find the product with all related data
         const product = await Product.findById(productId)
-            .populate('shop', 'name image owners whatsappGroupUrl')
+            .populate({
+                path: 'shop',
+                select: 'name image whatsappGroupUrl owners',
+                populate: [
+                    {
+                        path: 'image',
+                        select: 'url label'
+                    },
+                    {
+                        path: 'owners',
+                        select: 'name email phone image address'
+                    }
+                ]
+            })
             .populate('category', 'name slug')
             .populate('images', 'label url')
-            .lean<PopulatedProduct>();
+            .lean();
 
         if (!product) {
             return NextResponse.json(
@@ -65,7 +40,6 @@ export async function GET(
                 { status: 404 }
             );
         }
-
 
         return NextResponse.json({
             success: true,
