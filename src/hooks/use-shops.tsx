@@ -32,7 +32,7 @@ export function useShops() {
         }
     }, [])
 
-    const createShop = useCallback(async (name: string, imageId?: string) => {
+    const createShop = useCallback(async (name: string,whatsappGroupUrl: string, imageId?: string) => {
         setError("")
         try {
             const response = await fetch("/api/shops", {
@@ -40,6 +40,7 @@ export function useShops() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     name: name.trim(),
+                    whatsappGroupUrl: whatsappGroupUrl.trim(),
                     image: imageId || undefined,
                 }),
             })

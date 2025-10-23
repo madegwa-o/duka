@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
         }
 
         const body = await req.json();
-        const { name, image } = body;
+        const { name,whatsappGroupUrl, image } = body;
 
         // Validate shop name
         if (!name || name.trim().length < 2) {
@@ -131,6 +131,7 @@ export async function POST(req: NextRequest) {
         // Create new shop with current user as owner
         const shop = await Shop.create({
             name: name.trim(),
+            whatsappGroupUrl: whatsappGroupUrl.trim() || '',
             image: image || null,
             owners: [user._id],
             products: []

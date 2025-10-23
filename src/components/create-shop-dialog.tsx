@@ -19,7 +19,7 @@ import type { GalleryImage } from "@/hooks/use-gallery-images"
 interface CreateShopDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
-    onSubmit: (name: string, imageId?: string) => Promise<void>
+    onSubmit: (name: string,whatsappGroupUrl: string, imageId?: string) => Promise<void>
     galleryImages: GalleryImage[]
     isLoading?: boolean
 }
@@ -32,13 +32,19 @@ export const CreateShopDialog = memo(function CreateShopDialog({
                                                                    isLoading = false,
                                                                }: CreateShopDialogProps) {
     const [shopName, setShopName] = useState("")
+    const [whatsappGroupUrl, setWhatsappGroupUrl] = useState('')
     const [selectedImage, setSelectedImage] = useState<string>("")
     const [showImageSelector, setShowImageSelector] = useState(false)
 
     const handleSubmit = async () => {
-        if (!shopName.trim()) return
-        await onSubmit(shopName, selectedImage || undefined)
+        if (!shopName.trim() ) return
+
+        if (whatsappGroupUrl) {
+            await onSubmit(shopName, whatsappGroupUrl, selectedImage || undefined)
+        }
+        await onSubmit(shopName, '', selectedImage || undefined)
         setShopName("")
+        setWhatsappGroupUrl('')
         setSelectedImage("")
         onOpenChange(false)
     }
@@ -59,6 +65,16 @@ export const CreateShopDialog = memo(function CreateShopDialog({
                                 placeholder="My Awesome Shop"
                                 value={shopName}
                                 onChange={(e) => setShopName(e.target.value)}
+                                disabled={isLoading}
+                            />
+                        </div>
+                        <div>
+                            <Label htmlFor="whatsappGroupUrl">whatsapp Group Link(optional)</Label>
+                            <Input
+                                id="whatsappGroupUrl"
+                                placeholder=" https://chat.whatsapp.com/GFcqeFcihf0Bqpe5Phau"
+                                value={whatsappGroupUrl}
+                                onChange={(e) => setWhatsappGroupUrl(e.target.value)}
                                 disabled={isLoading}
                             />
                         </div>
