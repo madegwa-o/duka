@@ -26,6 +26,7 @@ export interface IUser extends Document {
 	password?: string;
 	image?: string;
 	phone?: string;
+	whatsappGroupUrl?: string;
 	address?: string;
 	cart: (Types.ObjectId | IProduct)[];
 	shops: (Types.ObjectId | IShop)[];
@@ -67,6 +68,7 @@ const UserSchema = new Schema<IUser>(
 		},
 		image: String,
 		phone: String,
+		whatsappGroupUrl: String,
 		address: String,
 		roles: {
 			type: [String],

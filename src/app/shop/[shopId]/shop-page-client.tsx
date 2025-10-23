@@ -249,7 +249,6 @@ export default function ShopPageClient({shopId}: ShopPageClientProps) {
                             ownerName={primaryOwner?.name}
                             ownerAddress={primaryOwner?.address}
                             variant="modal" // or "buttons" for inline
-                            nature='shop'
                         />
 
                     </div>

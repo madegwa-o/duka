@@ -337,7 +337,6 @@ export function ProductDetailModal({ product: initialProduct, onClose }: Product
                                             productPrice={product.price}
                                             shopName={product.shop.name}
                                             variant="modal"
-                                            nature='product'
                                         />
                                     </div>
                                 )}

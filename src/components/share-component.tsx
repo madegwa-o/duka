@@ -14,7 +14,6 @@ interface ShareComponentProps {
     ownerName?: string
     ownerAddress?: string
     variant?: "modal" | "buttons"
-    nature: string
 }
 
 export default function ShareComponent({
@@ -25,20 +24,13 @@ export default function ShareComponent({
                                            productPrice,
                                            ownerAddress,
                                            variant = "buttons",
-                                           nature,
+
                                        }: ShareComponentProps) {
     const [copied, setCopied] = useState(false)
 
     const baseUrl = typeof window !== "undefined" ? window.location.origin : ""
-    let shareUrl = ''
+    const shareUrl = shopId ? `${baseUrl}/shop/${shopId}` : productId ? `${baseUrl}/product/${productId}` : baseUrl
 
-    if (nature === 'product') {
-        shareUrl =  `${baseUrl}/shop/${shopId}/product/${productId}`
-    }else if (nature === 'shop') {
-        shareUrl =  `${baseUrl}/shop/${shopId}`
-    } else {
-        shareUrl =  `${baseUrl}`
-    }
 
     const title = productName || shopName || "Check this out on Duka"
     const description = productName
