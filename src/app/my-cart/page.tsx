@@ -46,7 +46,7 @@ const fetcher = (url: string) => fetch(url).then(res => {
 });
 
 export default function MyCart() {
-    const {data: session} = useSession();
+    const {data: session,status} = useSession();
     const router = useRouter()
     const [removingId, setRemovingId] = useState<string | null>(null);
 

@@ -6,10 +6,9 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle, Loader2, ArrowRight, Sparkles } from "lucide-react"
+import { AlertCircle, Loader2, ArrowRight } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import Image from 'next/image'
 
 export default function SignInPage() {
     const { data: session, status } = useSession()
