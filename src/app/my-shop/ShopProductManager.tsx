@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Loader2, AlertCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
@@ -15,6 +15,7 @@ import { useGalleryImages } from "@/hooks/use-gallery-images"
 import { useShops } from "@/hooks/use-shops"
 import { useProducts } from "@/hooks/use-products"
 import { useCategories } from "@/hooks/use-categories"
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 
 export default function ShopProductManager() {
     const { data: session, status } = useSession()
@@ -35,7 +36,7 @@ export default function ShopProductManager() {
 
     useEffect(() => {
         if (status === "unauthenticated") {
-            router.push(`/signin?callbackUrl=${encodeURIComponent("/shop-product-manager")}`)
+            router.push(`/signin?callbackUrl=${encodeURIComponent("/my-shop")}`)
         }
     }, [status, router])
 
@@ -111,38 +112,59 @@ export default function ShopProductManager() {
                 </Alert>
             )}
 
-            {/* Image Upload & Gallery Section */}
-            <div className="grid gap-6 lg:grid-cols-3 mb-6">
-                <ImageUploader onImageSaved={handleImageSaved} onError={handleImageError} />
-                <ImageGallery images={galleryImages.images} onDelete={galleryImages.deleteImage} />
-            </div>
+            <Tabs defaultValue="gallery" className="space-y-6">
+                <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+                    <TabsTrigger value="gallery">Gallery</TabsTrigger>
+                    <TabsTrigger value="shops">Shops</TabsTrigger>
+                    <TabsTrigger value="products">Products</TabsTrigger>
+                </TabsList>
 
-            {/* Shops Section */}
-            <ShopList shops={shops.shops} onCreateClick={() => setShopDialogOpen(true)} />
 
-            {/* Products Section */}
-            <div className="mt-6">
-                <ProductList products={products.products} onCreateClick={() => setProductDialogOpen(true)} />
-            </div>
+                <TabsContent value="gallery" className="space-y-6">
+                    {/* Image Upload & Gallery Section */}
+                    <div className="grid gap-6 lg:grid-cols-3 mb-6">
+                        <ImageUploader onImageSaved={handleImageSaved} onError={handleImageError} />
+                        <ImageGallery images={galleryImages.images} onDelete={galleryImages.deleteImage} />
+                    </div>
+                </TabsContent>
 
-            {/* Dialogs */}
-            <CreateShopDialog
-                open={shopDialogOpen}
-                onOpenChange={setShopDialogOpen}
-                onSubmit={handleCreateShop}
-                galleryImages={galleryImages.images}
-                isLoading={creatingShop}
-            />
+                <TabsContent value="shops" className="space-y-6">
 
-            <CreateProductDialog
-                open={productDialogOpen}
-                onOpenChange={setProductDialogOpen}
-                onSubmit={handleCreateProduct}
-                shops={shops.shops}
-                galleryImages={galleryImages.images}
-                categories={categories.categories}
-                isLoading={creatingProduct}
-            />
+                    {/* Shops Section */}
+                    <ShopList shops={shops.shops} onCreateClick={() => setShopDialogOpen(true)} />
+
+
+                    {/* Dialogs */}
+                    <CreateShopDialog
+                        open={shopDialogOpen}
+                        onOpenChange={setShopDialogOpen}
+                        onSubmit={handleCreateShop}
+                        galleryImages={galleryImages.images}
+                        isLoading={creatingShop}
+                    />
+
+                </TabsContent>
+                <TabsContent value="products" className="space-y-6">
+
+                    {/* Products Section */}
+                    <div className="mt-6">
+                        <ProductList products={products.products} onCreateClick={() => setProductDialogOpen(true)} />
+                    </div>
+
+                    <CreateProductDialog
+                        open={productDialogOpen}
+                        onOpenChange={setProductDialogOpen}
+                        onSubmit={handleCreateProduct}
+                        shops={shops.shops}
+                        galleryImages={galleryImages.images}
+                        categories={categories.categories}
+                        isLoading={creatingProduct}
+                    />
+                </TabsContent>
+
+            </Tabs>
+
+
         </main>
     )
 }

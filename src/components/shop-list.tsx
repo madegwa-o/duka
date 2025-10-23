@@ -29,11 +29,22 @@ export const ShopList = memo(function ShopList({ shops, onCreateClick }: ShopLis
             </CardHeader>
             <CardContent>
                 {shops.length === 0 ? (
-                    <div className="text-center py-12">
-                        <div className="text-4xl mb-2">🏪</div>
-                        <p className="text-muted-foreground mb-4">No shops yet</p>
-                        <Button onClick={onCreateClick}>Create Your First Shop</Button>
+                    <div className="flex flex-col items-center justify-center py-12">
+                        <div className="relative w-32 h-32 mb-4">
+                            <Image
+                                src="/logo.png"
+                                alt="Duka"
+                                fill
+                                className="object-contain drop-shadow-md transition-transform duration-300 hover:scale-105"
+                                priority
+                            />
+                        </div>
+                        <p className="text-muted-foreground mb-4 text-sm">No shops yet</p>
+                        <Button onClick={onCreateClick} className="shadow-sm hover:shadow-md transition-all">
+                            Create Your First Shop
+                        </Button>
                     </div>
+
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {shops.map((shop) => (

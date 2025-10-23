@@ -1,7 +1,7 @@
 "use client"
 
 import { memo } from "react"
-import { Trash2 } from "lucide-react"
+import { Trash2, CameraIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
@@ -34,8 +34,16 @@ export const ImageGallery = memo(function ImageGallery({
             <CardContent>
                 {images.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-48 text-center">
-                        <div className="h-12 w-12 text-muted-foreground mb-2">📷</div>
-                        <p className="text-muted-foreground text-sm">No images yet</p>
+                        <div className="relative w-32 h-32 mb-4">
+                            <Image
+                                src="/logo.png"
+                                alt="Duka"
+                                fill
+                                className="object-contain drop-shadow-md transition-transform duration-300 hover:scale-105"
+                                priority
+                            />
+                        </div>
+                        <p className="text-muted-foreground mb-4 text-sm">No shops yet</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 gap-3 max-h-[500px] overflow-y-auto">
