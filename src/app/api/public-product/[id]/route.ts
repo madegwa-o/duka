@@ -54,7 +54,7 @@ export async function GET(
 
         // Find the product
         const product = await Product.findById(productId)
-            .populate('shop', 'name image owners')
+            .populate('shop', 'name image owners whatsappGroupUrl')
             .populate('category', 'name slug')
             .populate('images', 'label url')
             .lean<PopulatedProduct>();

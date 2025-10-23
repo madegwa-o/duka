@@ -10,6 +10,7 @@ import { IImage } from "@/models/Image";
 export interface IShop extends Document {
     _id: Types.ObjectId;
     name: string;
+    whatsappGroupUrl?: string;
     image?: Types.ObjectId | IImage; // ✅ Changed to reference Image model
     owners: (Types.ObjectId | IUser)[];
     products: (Types.ObjectId | IProduct)[];
@@ -26,6 +27,7 @@ const ShopSchema = new Schema<IShop>(
             minlength: 2,
             maxlength: 100,
         },
+        whatsappGroupUrl: String,
         image: {
             type: Schema.Types.ObjectId,
             ref: 'Image',
