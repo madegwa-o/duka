@@ -122,7 +122,7 @@ export async function generateMetadata({
                         width: 1200,
                         height: 630,
                         alt: `${shop.name} shop preview`,
-                        type: "image/jpeg",
+                        type: "image/png",
                     },
                 ],
             },

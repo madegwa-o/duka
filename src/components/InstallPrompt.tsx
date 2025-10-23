@@ -111,13 +111,13 @@ export default function InstallPrompt() {
     // Show Install Prompt
     if (showInstallPrompt && deferredPrompt) {
         return (
-            <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-50 animate-in slide-in-from-bottom-5">
+            <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-10000 animate-in slide-in-from-bottom-5">
                 <div className="bg-card border-border rounded-lg shadow-lg border p-4">
                     <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center gap-3">
                             <Image
                                 src="/android-chrome-192x192.png"
-                                alt="Kia"
+                                alt="Duka"
                                 width={48}
                                 height={48}
                                 className="w-12 h-12 rounded-lg"
@@ -125,7 +125,7 @@ export default function InstallPrompt() {
 
                             <div>
                                 <h3 className="font-semibold text-card-foreground">Install Duka</h3>
-                                <p className="text-sm text-muted-foreground">Get quick access to your shop Insights</p>
+                                <p className="text-sm text-muted-foreground">Get quick access to your shop</p>
                             </div>
                         </div>
                         <button
@@ -152,7 +152,7 @@ export default function InstallPrompt() {
     // Show Notification Prompt
     if (showNotificationPrompt) {
         return (
-            <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-50 animate-in slide-in-from-bottom-5">
+            <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-10000 animate-in slide-in-from-bottom-5">
                 <div className="bg-card border-border rounded-lg shadow-lg border p-4">
                     <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center gap-3">
@@ -160,8 +160,8 @@ export default function InstallPrompt() {
                                 <Bell className="h-6 w-6 text-accent" />
                             </div>
                             <div>
-                                <h3 className="font-semibold text-card-foreground">Enable Notifications</h3>
-                                <p className="text-sm text-muted-foreground">Stay updated with your shop listings</p>
+                                <h3 className="font-semibold text-card-foreground">Get Notified</h3>
+                                <p className="text-sm text-muted-foreground">We&#39;ll let you know when we see potential clients</p>
                             </div>
                         </div>
                         <button
